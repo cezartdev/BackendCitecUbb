@@ -5,7 +5,13 @@
     "fontSize": 16,
     "emojiStyle": "native",
     "iconColor": null,
-    "recentlyUsedIcons": [],
+    "recentlyUsedIcons": [
+      "FasFileInvoiceDollar",
+      "RiSpeakFill",
+      "FabReadme",
+      "TiFunction",
+      "RiRouteFill"
+    ],
     "recentlyUsedIconsSize": 5,
     "rules": [],
     "extraMargin": {
@@ -26,5 +32,11 @@
     "iconIdentifier": ":",
     "lucideIconPackType": "native",
     "debugMode": false
-  }
+  },
+  "Usuarios/Rutas Usuario.md": "RiRouteFill",
+  "Usuarios": "TiUser",
+  "Funcionalidades.md": "TiFunction",
+  "README.md": "FabReadme",
+  "Conversación Citec 13-09-2024.md": "RiSpeakFill",
+  "Facturas": "FasFileInvoiceDollar"
 }
