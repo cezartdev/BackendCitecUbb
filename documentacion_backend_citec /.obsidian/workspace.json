@@ -11,15 +11,24 @@
             "id": "9fadada53a0df503",
             "type": "leaf",
             "state": {
+              "type": "empty",
+              "state": {}
+            }
+          },
+          {
+            "id": "80fb3ff38134c55a",
+            "type": "leaf",
+            "state": {
               "type": "markdown",
               "state": {
-                "file": "Conversación Citec 13-09-2024.md",
+                "file": "Usuarios/Rutas Usuarios.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Conversación Citec 13-09-2024.md",
+                "file": "Usuarios/Rutas Usuarios.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +111,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Conversación Citec 13-09-2024.md",
+                "file": "Usuarios/Rutas Usuarios.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +134,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Conversación Citec 13-09-2024.md"
+                "file": "Usuarios/Rutas Usuarios.md"
               }
             }
           },
@@ -156,13 +165,15 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "97dd6d47ae5d259b",
+  "active": "80fb3ff38134c55a",
   "lastOpenFiles": [
-    "Facturas",
-    "README.md",
-    "Usuarios/Rutas Usuario.md",
+    "Usuarios/Rutas Usuario Excalidraw.md",
+    "Usuarios/Rutas Usuarios.md",
+    "Usuarios/Rutas Usuario Excalidraw.png",
     "Conversación Citec 13-09-2024.md",
     "Funcionalidades.md",
+    "README.md",
+    "Facturas",
     "Excalidraw",
     "Usuarios",
     "Welcome.md"
