@@ -33,10 +33,10 @@
     "lucideIconPackType": "native",
     "debugMode": false
   },
-  "Usuarios": "TiUser",
   "Funcionalidades.md": "TiFunction",
   "README.md": "FabReadme",
   "Conversación Citec 13-09-2024.md": "RiSpeakFill",
   "Facturas": "FasFileInvoiceDollar",
-  "Usuarios/Rutas Usuarios.md": "RiRouteFill"
+  "Rutas Usuarios": "TiUser",
+  "Rutas Usuarios/Rutas Usuarios.md": "RiRouteFill"
 }

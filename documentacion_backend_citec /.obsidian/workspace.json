@@ -4,31 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "7050872c616853bc",
+        "id": "6bbc39b1f9c7d52d",
         "type": "tabs",
         "children": [
           {
-            "id": "9fadada53a0df503",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {}
-            }
-          },
-          {
-            "id": "80fb3ff38134c55a",
+            "id": "fe80164dffa49155",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Usuarios/Rutas Usuarios.md",
+                "file": "Rutas Usuarios/Rutas Usuarios.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -94,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Usuarios/Rutas Usuarios.md",
+                "file": "Rutas Usuarios/Rutas Usuarios.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Usuarios/Rutas Usuarios.md",
+                "file": "Rutas Usuarios/Rutas Usuarios.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Usuarios/Rutas Usuarios.md"
+                "file": "Rutas Usuarios/Rutas Usuarios.md"
               }
             }
           },
@@ -165,17 +156,17 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "80fb3ff38134c55a",
+  "active": "a8f66829049fb1c9",
   "lastOpenFiles": [
-    "Usuarios/Rutas Usuario Excalidraw.md",
-    "Usuarios/Rutas Usuarios.md",
-    "Usuarios/Rutas Usuario Excalidraw.png",
-    "Conversación Citec 13-09-2024.md",
-    "Funcionalidades.md",
     "README.md",
+    "Funcionalidades.md",
+    "Conversación Citec 13-09-2024.md",
+    "Rutas Usuarios/Rutas Usuarios.md",
+    "Usuarios/Rutas Usuario Excalidraw.md",
+    "Usuarios/Rutas Usuario Excalidraw.png",
     "Facturas",
     "Excalidraw",
-    "Usuarios",
+    "Rutas Usuarios",
     "Welcome.md"
   ]
 }
