@@ -1,5 +1,7 @@
 import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
+import bcrypt from "bcrypt";
+import KeepFormatError from "../utils/KeepFormatErrors";
 
 class User {
     //Modelo SQL de la clase
@@ -15,10 +17,18 @@ class User {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `;
+        
+        const saltRounds = 10;
+        const passwordDefaultAdmin = "1234";
+        const passwordDefaultUser = "1234";
+        // Genera el hash de la contraseña
+        const hashedAdminPassword = await bcrypt.hash(passwordDefaultAdmin, saltRounds);
+        const hashedUserPassword = await bcrypt.hash(passwordDefaultUser, saltRounds);
+
         const insertDataQuery = `
             INSERT INTO usuarios (email, nombre, apellido,contraseña,nombre_tipo) VALUES
-            ('admin@gmail.com', 'admin', 'admin','1234','admin'),
-            ('user@gmail.com', 'UserFirstName' ,'UserLastName', '1234', 'usuario')
+            ('admin@gmail.com', 'admin', 'admin','${hashedAdminPassword}','admin'),
+            ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario')
             ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 
@@ -62,24 +72,29 @@ class User {
         const querySelect = 'SELECT * FROM usuarios WHERE email = ?';
         
         try {
-           
+            
             const [rows] = await db.execute<RowDataPacket[]>(querySelect, [email]);
 
             const user = rows[0];
+            
+            //Si no existe el usuario con el email especificado
+            if(!user){
+                const errors = [{type:"field",msg:"Usuario o contraseña incorrecta",value:`${email}`, path:"email",location:"body"}]
+                throw new KeepFormatError(errors);
+            }
 
+            const hashedPassword = user.contraseña;
+            
+            const isMatch = await bcrypt.compare(contraseña,hashedPassword);
+            // Si la contraseña es verdadera isMatch toma el valor de true
+            
 
-
-            /* devolver esto
-                {
-                    "login": true,
-                   "usuario":{
-                        datos del usuario
-                   }
-                
-                }
-            */
-
-           
+            if(!isMatch){
+                const errors = [{type:"field",msg:"Usuario o contraseña incorrecta",value:`${contraseña}`, path:"contraseña",location:"body"}]
+                throw new KeepFormatError(errors);
+            }
+            
+            
             return rows[0]; 
         } catch (err) {
             throw err;
