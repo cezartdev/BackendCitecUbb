@@ -19,6 +19,6 @@ export const loginUser = async (req: Request, res: Response) => {
         const response = await User.login(email,contraseña);
         res.status(200).json({login_status:true, response });
     } catch (err) {
-        res.status(500).json({ msg: "Error al ingresar", errors:err.details });
+        res.status(500).json({ errors:err.details });
     }
 };
