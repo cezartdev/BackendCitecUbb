@@ -1,6 +1,6 @@
 import db from "../config/db"
 
-class Type {
+class BussinessLine {
     //Modelo SQL de la clase
     static async initTable(): Promise<void> {
         const createTableQuery = `
@@ -32,4 +32,4 @@ class Type {
 
 }
 
-export default Bussiness - Line;
+export default BussinessLine;

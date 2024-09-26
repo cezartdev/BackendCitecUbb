@@ -4,5 +4,6 @@ import { handleInputErrors } from "../middleware/index"
 
 const router = Router();
 
+router.get("/get-by-id",)
 
 export default router;
