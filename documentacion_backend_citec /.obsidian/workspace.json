@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "6bbc39b1f9c7d52d",
+        "id": "4893190c87f01bec",
         "type": "tabs",
         "children": [
           {
-            "id": "fe80164dffa49155",
+            "id": "5fd61cb2a6725303",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "7ce10501402b8267",
@@ -142,7 +143,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -156,16 +158,19 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "a8f66829049fb1c9",
+  "active": "5fd61cb2a6725303",
   "lastOpenFiles": [
-    "Untitled.md",
-    "Empresas",
+    "Contactos/Rutas Contactos.md",
     "Giros o Actividad economica/Rutas Giros.md",
     "Rutas Usuarios/Rutas Usuarios.md",
-    "Giros o Actividad economica",
+    "Empresas/Rutas Empresas.md",
+    "Contactos",
     "README.md",
-    "Funcionalidades.md",
     "Conversación Citec 13-09-2024.md",
+    "Funcionalidades.md",
+    "Untitled.md",
+    "Empresas",
+    "Giros o Actividad economica",
     "Usuarios/Rutas Usuario Excalidraw.md",
     "Usuarios/Rutas Usuario Excalidraw.png",
     "Facturas",

@@ -1,5 +1,5 @@
-#giros #backend #crud 
-### (GET) "backend-url/api/business-line/get-by-id/:id"
+#empresa #backend #crud 
+### (GET) "backend-url/api/business/get-by-id/:id"
 #### Descripcion
 - Debe entregar el giro segun el codigo proporcionado
 
@@ -24,8 +24,7 @@ Request (url or params):
 Response (status:200)("success"):
 {
     "response": {
-        "codigo": "239200",
-        "nombre": "FABRICACIÓN DE MATERIALES DE CONSTRUCCIÓN DE ARCILLA"
+        "nombre": "FABRICACIÓN DE MATERIALES DE CONSTRUCCIÓN DE ARCILLA",
     }
 }
 
@@ -43,7 +42,7 @@ Response (status:300s || 400s || 500s)("error"):
     "errors": [
         {
             "type": "field",
-            "msg": "giro no encontrado",
+            "msg": "codigo del giro incorrecto",
             "value": "11123",
             "path": "id",
             "location": "url"
@@ -105,10 +104,10 @@ Response (status:300s || 400s || 500s)("error"):
     "errors": [
         {
             "type": "field",
-            "msg": "error inesperado",
-            "value": "desconocido",
-            "path": "desconocido",
-            "location": "frontend o backend"
+            "msg": "codigo del giro incorrecto",
+            "value": "11123",
+            "path": "id",
+            "location": "url"
         }
     ]
 }
