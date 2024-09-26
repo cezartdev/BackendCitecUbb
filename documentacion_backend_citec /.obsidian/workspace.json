@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rutas Usuarios/Rutas Usuarios.md",
+                "file": "Giros o Actividad economica/Rutas Giros.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "7ce10501402b8267",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Rutas Usuarios/Rutas Usuarios.md",
+                "file": "Giros o Actividad economica/Rutas Giros.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Rutas Usuarios/Rutas Usuarios.md",
+                "file": "Giros o Actividad economica/Rutas Giros.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rutas Usuarios/Rutas Usuarios.md"
+                "file": "Giros o Actividad economica/Rutas Giros.md"
               }
             }
           },
@@ -157,12 +156,16 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "fe80164dffa49155",
+  "active": "a8f66829049fb1c9",
   "lastOpenFiles": [
+    "Untitled.md",
+    "Empresas",
+    "Giros o Actividad economica/Rutas Giros.md",
+    "Rutas Usuarios/Rutas Usuarios.md",
+    "Giros o Actividad economica",
     "README.md",
     "Funcionalidades.md",
     "Conversación Citec 13-09-2024.md",
-    "Rutas Usuarios/Rutas Usuarios.md",
     "Usuarios/Rutas Usuario Excalidraw.md",
     "Usuarios/Rutas Usuario Excalidraw.png",
     "Facturas",
