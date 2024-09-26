@@ -7,23 +7,38 @@ import fs from 'fs';
 import path from 'path';
 
 const initDb = async () => {
+    const modelsFirstPath = path.join(__dirname, 'models', 'first');  // Ruta a la carpeta 'models/first'
     const modelsPath = path.join(__dirname, 'models');  // Ruta a la carpeta 'models'
+
     try {
-        // Leer todos los archivos en la carpeta 'models'
-        const files = fs.readdirSync(modelsPath);
+        // Función auxiliar para inicializar tablas de una carpeta específica
+        const initializeTablesFromFolder = async (folderPath: string) => {
+            // Leer todos los archivos en la carpeta
+            const files = fs.readdirSync(folderPath);
 
-        for (const file of files) {
-            // Verificar que el archivo es un archivo TypeScript o JavaScript
-            if (file.endsWith('.ts') || file.endsWith('.js')) {
-                // Importar el archivo dinámicamente usando require()
-                const model = require(path.join(modelsPath, file));
+            for (const file of files) {
+                // Verificar que el archivo es un archivo TypeScript o JavaScript
+                if (file.endsWith('.ts') || file.endsWith('.js')) {
+                    // Importar el archivo dinámicamente usando require()
+                    const model = require(path.join(folderPath, file));
 
-                // Verificar si el archivo importado tiene el método 'initTable'
-                if (model.default && typeof model.default.initTable === 'function') {
-                    await model.default.initTable();  // Llamar al método initTable
-                    console.log(`Tabla inicializada desde: ${file}`);
+                    // Verificar si el archivo importado tiene el método 'initTable'
+                    if (model.default && typeof model.default.initTable === 'function') {
+                        await model.default.initTable();  // Llamar al método initTable
+                        console.log(`Tabla inicializada desde: ${file}`);
+                    }
                 }
             }
+        };
+
+        // Inicializar las tablas desde 'models/first'
+        if (fs.existsSync(modelsFirstPath)) {
+            await initializeTablesFromFolder(modelsFirstPath);
+        }
+
+        // Inicializar las tablas desde 'models'
+        if (fs.existsSync(modelsPath)) {
+            await initializeTablesFromFolder(modelsPath);
         }
 
         console.log('Todas las tablas han sido inicializadas correctamente.');

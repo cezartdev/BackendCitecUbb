@@ -1,5 +1,6 @@
-import db from "../config/db"
+import db from "../../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
+import KeepFormatError from "../../utils/KeepFormatErrors";
 
 class Type {
     //Modelo SQL de la clase
@@ -52,7 +53,19 @@ class Type {
     }
 
     // Obtener todos 
+    static async getAll(): Promise<RowDataPacket[]> {
+        const querySelect = 'SELECT * FROM tipos';
+        
+        try {
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
 
+            
+            // Devolvemos
+            return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     // Obtener por ID
 
