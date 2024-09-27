@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Type from "../models/Type.model";
+import Type from "../models/first/Type.model";
 
 
 export const getAll = async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
-import db from "../config/db"
+import db from "../../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import KeepFormatError from "../utils/KeepFormatErrors";
+import KeepFormatError from "../../utils/KeepFormatErrors";
 
 class Type {
     //Modelo SQL de la clase
