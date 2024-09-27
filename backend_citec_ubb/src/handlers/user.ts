@@ -11,6 +11,14 @@ export const createUser = async (req: Request, res: Response) => {
     }
 };
 
+export const getAll = async (req: Request, res: Response) => {
+    try {
+        const response = await User.getAll();
+        res.status(200).json({ response });
+    } catch (err) {
+        res.status(500).json({ errors:err.message });
+    }
+};
 
 export const loginUser = async (req: Request, res: Response) => {
     const {email, contraseña} = req.body;

@@ -4,10 +4,13 @@ import bcrypt from "bcrypt";
 import KeepFormatError from "../utils/KeepFormatErrors";
 
 class User {
+
+    private static nombreTabla: string = "usuarios";
+
     //Modelo SQL de la clase
     static async initTable(): Promise<void> {
         const createTableQuery = `
-            CREATE TABLE IF NOT EXISTS usuarios (
+            CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 email VARCHAR(200) PRIMARY KEY,
                 nombre VARCHAR(50) NOT NULL,
                 apellido VARCHAR(50) NOT NULL,
@@ -15,7 +18,7 @@ class User {
                 nombre_tipo VARCHAR(30) NOT NULL,
                 FOREIGN KEY (nombre_tipo) REFERENCES tipos(nombre),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de usuarios para el Inicio de sesion';
         `;
         
         const saltRounds = 10;
@@ -26,7 +29,7 @@ class User {
         const hashedUserPassword = await bcrypt.hash(passwordDefaultUser, saltRounds);
 
         const insertDataQuery = `
-            INSERT INTO usuarios (email, nombre, apellido,contraseña,nombre_tipo) VALUES
+            INSERT INTO ${this.nombreTabla} (email, nombre, apellido,contraseña,nombre_tipo) VALUES
             ('admin@gmail.com', 'admin', 'admin','${hashedAdminPassword}','admin'),
             ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario')
             ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
@@ -46,14 +49,13 @@ class User {
 
     // Crear un nuevo usuario
     static async create( email: string, nombre: string, apellido: string, contraseña: string, tipo: string): Promise<RowDataPacket> {
-        const queryInsert = 'INSERT INTO usuarios (email, nombre, apellido, contraseña, tipo) VALUES (?, ?, ?, ?, ?)';
-        const querySelect = 'SELECT * FROM usuarios WHERE email = ?';
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (email, nombre, apellido, contraseña, tipo) VALUES (?, ?, ?, ?, ?)`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
         
         try {
             // Ejecuta la consulta de inserción
             const [result] = await db.execute<ResultSetHeader>(queryInsert, [email, nombre, apellido, contraseña,tipo]);
 
-            console.log(result);
             // Obtenemos el id del usuario recién creado
             const insertId = result.insertId;
 
@@ -103,7 +105,17 @@ class User {
 
 
     // Obtener todos los usuarios
+    static async getAll(): Promise<RowDataPacket[]> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla}`;
+        
+        try {
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
 
+            return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     // Obtener un usuario por ID
 
