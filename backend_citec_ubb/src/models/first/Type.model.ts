@@ -11,7 +11,7 @@ class Type {
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 nombre VARCHAR(30) PRIMARY KEY,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de usuario de inicio de sesion';
         `;
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (nombre) VALUES

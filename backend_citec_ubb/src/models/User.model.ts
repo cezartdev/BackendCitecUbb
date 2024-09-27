@@ -48,19 +48,25 @@ class User {
 
 
     // Crear un nuevo usuario
-    static async create( email: string, nombre: string, apellido: string, contraseña: string, tipo: string): Promise<RowDataPacket> {
-        const queryInsert = `INSERT INTO ${this.nombreTabla} (email, nombre, apellido, contraseña, tipo) VALUES (?, ?, ?, ?, ?)`;
+    static async create( email: string, nombre: string, apellido: string, contraseña: string, nombre_tipo: string): Promise<RowDataPacket> {
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (email, nombre, apellido, contraseña, nombre_tipo) VALUES (?, ?, ?, ?, ?)`;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
-        
+        const queryType = `SELECT * FROM tipos WHERE nombre = ?`
         try {
-            // Ejecuta la consulta de inserción
-            const [result] = await db.execute<ResultSetHeader>(queryInsert, [email, nombre, apellido, contraseña,tipo]);
 
-            // Obtenemos el id del usuario recién creado
-            const insertId = result.insertId;
+            //TODO: Falta crear la validacion del tipo
+            const [type] = await db.execute<ResultSetHeader>(queryType, [nombre_tipo]);
+
+            if(!type[0]){
+                const errors = [{type:"field",msg:"Error al crear usuario",value:`${nombre_tipo}`, path:"nombre_tipo",location:"body"}]
+                throw new KeepFormatError(errors);
+            }
+            // Ejecuta la consulta de inserción
+            const [result] = await db.execute<ResultSetHeader>(queryInsert, [email, nombre, apellido, contraseña,nombre_tipo]);
+
 
             // Ejecutamos la consulta para obtener los datos completos del usuario
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [insertId]);
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [email]);
 
             // Devolvemos el usuario creado
             return rows[0]; // Como es solo un usuario, devolvemos el primer (y único) elemento
@@ -71,7 +77,7 @@ class User {
 
     // Login usuario
     static async login( email: string, contraseña: string): Promise<RowDataPacket> {
-        const querySelect = 'SELECT * FROM usuarios WHERE email = ?';
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
         
         try {
             
@@ -124,7 +130,26 @@ class User {
 
 
     // Eliminar un usuario
+    static async delete(id: string): Promise<RowDataPacket> {
+        const queryDelete = `DELETE FROM ${this.nombreTabla} WHERE email = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`
+        try {
+            const [user] = await db.execute<RowDataPacket[]>(querySelect, [id]);
+            const userDelete = user[0];
 
+            if(!user[0]){
+                const errors = [{type:"field",msg:"Usuario no encontrado",value:`id`, path:"params",location:"url"}]
+                throw new KeepFormatError(errors);
+            }
+
+            const [rows] = await db.execute<RowDataPacket[]>(queryDelete, [id]);
+
+
+            return userDelete;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default User;

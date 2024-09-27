@@ -15,13 +15,13 @@ export const handleInputErrors = async (req: Request,res:Response, next: NextFun
 export const handlePasswordEncrypt = async (req: Request,res:Response, next: NextFunction) =>{
     
     const saltRounds = 10;
-    const { password } = req.body;
+    const { contraseña } = req.body;
     try {
         // Genera el hash de la contraseña
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(contraseña, saltRounds);
         
         // Reemplaza la contraseña en el cuerpo de la solicitud con el hash
-        req.body.password = hashedPassword;
+        req.body.contraseña = hashedPassword;
         
         // Continúa al siguiente middleware o controlador
         next();
