@@ -21,7 +21,7 @@ class Business {
                 comuna INT NOT NULL,
                 telefono VARCHAR(20) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (region) REFERENCES regiones(id_re),
+                FOREIGN KEY (region) REFERENCES regiones(id),
                 FOREIGN KEY (provincia) REFERENCES provincias(id_pr),
                 FOREIGN KEY (comuna) REFERENCES comunas(id_co)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de usuarios para el Inicio de sesion';

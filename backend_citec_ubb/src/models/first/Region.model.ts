@@ -10,33 +10,32 @@ class Region {
        
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                id_re int NOT NULL COMMENT 'ID unico',
-                str_descripcion varchar(60) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre extenso',
-                str_romano varchar(5) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Número de región',
-                num_provincias int NOT NULL COMMENT 'total provincias',
-                num_comunas int NOT NULL COMMENT 'Total de comunas',
+                id int NOT NULL COMMENT 'ID unico',
+                nombre varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre extenso',
+                ordinal varchar(5) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Número de región',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id_re)
+                PRIMARY KEY (id)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de regiones de Chile';
         `;
         const insertDataQuery = `
-            INSERT INTO ${this.nombreTabla} (id_re,str_descripcion,str_romano,num_provincias,num_comunas) VALUES 
-                (1,'ARICA Y PARINACOTA','XV',2,4),
-				(2,'TARAPACÁ','I',2,7),
-				(3,'ANTOFAGASTA','II',3,9),
-				(4,'ATACAMA','III',3,9),
-				(5,'COQUIMBO','IV',3,15),
-				(6,'VALPARAÍSO','V',8,38),
-				(7,"DEL LIBERTADOR GRAL. BERNARDO O'HIGGINS",'VI',3,33),
-				(8,'DEL MAULE','VII',4,30),
-				(9,'DEL BIOBÍO','VIII',4,54),
-				(10,'DE LA ARAUCANÍA','IX',2,32),
-				(11,'DE LOS RÍOS','XIV',2,12),
-				(12,'DE LOS LAGOS','X',4,30),
-				(13,'AISÉN DEL GRAL. CARLOS IBAÑEZ DEL CAMPO ','XI',4,10),
-				(14,'MAGALLANES Y DE LA ANTÁRTICA CHILENA','XII',4,11),
-				(15,'METROPOLITANA DE SANTIAGO','RM',6,52)
-                ON DUPLICATE KEY UPDATE str_descripcion = VALUES(str_descripcion);
+            INSERT INTO ${this.nombreTabla} (id,nombre,ordinal) VALUES 
+                (1,'Tarapacá','I'),	
+                (2,'Antofagasta','II'),	
+                (3,'Atacama','III'),	
+                (4,'Coquimbo','IV'),	
+                (5,'Valparaiso','V'),	
+                (6,"Libertador General Bernardo O'Higgins",'VI'),	
+                (7,'Maule','VII'),
+                (8,'Biobío','VIII'),	
+                (9,'La Araucanía','IX'),	
+                (10,'Los Lagos','X'),	
+                (11,'Aisén del General Carlos Ibáñez del Campo','XI'),	
+                (12,'Magallanes y de la Antártica Chilena','XII'),
+                (13,'Metropolitana de Santiago','RM'),	
+                (14,'Los Ríos','XIV'),	
+                (15,'Arica y Parinacota','XV'),	
+                (16,'Ñuble','XVI')
+                ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 
         try {
