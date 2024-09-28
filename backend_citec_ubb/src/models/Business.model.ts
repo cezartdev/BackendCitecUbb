@@ -3,36 +3,34 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import bcrypt from "bcrypt";
 import KeepFormatError from "../utils/KeepFormatErrors";
 
-class User {
+class Business {
 
-    private static nombreTabla: string = "usuarios";
+    private static nombreTabla: string = "empresas";
 
     //Modelo SQL de la clase
     static async initTable(): Promise<void> {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                email VARCHAR(200) PRIMARY KEY,
-                nombre VARCHAR(50) NOT NULL,
-                apellido VARCHAR(50) NOT NULL,
-                contraseña VARCHAR(250) NOT NULL,
-                nombre_tipo VARCHAR(30) NOT NULL,
-                FOREIGN KEY (nombre_tipo) REFERENCES tipos(nombre),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                rut VARCHAR(200) PRIMARY KEY,
+                razon_social VARCHAR(50) NOT NULL,
+                nombre_de_fantasia VARCHAR(200) NOT NULL,
+                email_factura VARCHAR(200) NOT NULL,
+                direccion VARCHAR(250) NOT NULL,
+                region INT NOT NULL,
+                provincia INT NOT NULL,
+                comuna INT NOT NULL,
+                telefono VARCHAR(20) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (region) REFERENCES regiones(id_re),
+                FOREIGN KEY (provincia) REFERENCES provincias(id_pr),
+                FOREIGN KEY (comuna) REFERENCES comunas(id_co)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de usuarios para el Inicio de sesion';
         `;
-        
-        const saltRounds = 10;
-        const passwordDefaultAdmin = "1234";
-        const passwordDefaultUser = "1234";
-        // Genera el hash de la contraseña
-        const hashedAdminPassword = await bcrypt.hash(passwordDefaultAdmin, saltRounds);
-        const hashedUserPassword = await bcrypt.hash(passwordDefaultUser, saltRounds);
-
+     
         const insertDataQuery = `
-            INSERT INTO ${this.nombreTabla} (email, nombre, apellido,contraseña,nombre_tipo) VALUES
-            ('admin@gmail.com', 'admin', 'admin','${hashedAdminPassword}','admin'),
-            ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario')
-            ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
+            INSERT INTO ${this.nombreTabla} (rut,razon_social,nombre_de_fantasia,email_factura,direccion,region,provincia,comuna,telefono) VALUES
+            ('84.976.200-1', 'Cerámicas Santiago S.A.', 'Cerámicas Santiago S.A.','frios@ceramicasantiago.cl','Avda Italia 1000','9','1','1','+56912345678')
+            ON DUPLICATE KEY UPDATE rut = VALUES(rut);
         `;
 
         try {
@@ -75,40 +73,7 @@ class User {
         }
     }
 
-    // Login usuario
-    static async login( email: string, contraseña: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
-        
-        try {
-            
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [email]);
-
-            const user = rows[0];
-            
-            //Si no existe el usuario con el email especificado
-            if(!user){
-                const errors = [{type:"field",msg:"Usuario o contraseña incorrecta",value:`${email}`, path:"email",location:"body"}]
-                throw new KeepFormatError(errors);
-            }
-
-            const hashedPassword = user.contraseña;
-            
-            const isMatch = await bcrypt.compare(contraseña,hashedPassword);
-            // Si la contraseña es verdadera isMatch toma el valor de true
-            
-
-            if(!isMatch){
-                const errors = [{type:"field",msg:"Usuario o contraseña incorrecta",value:`${contraseña}`, path:"contraseña",location:"body"}]
-                throw new KeepFormatError(errors);
-            }
-            
-            
-            return rows[0]; 
-        } catch (err) {
-            throw err;
-        }
-    }
-
+   
 
     // Obtener todos los usuarios
     static async getAll(): Promise<RowDataPacket[]> {
@@ -152,4 +117,4 @@ class User {
     }
 }
 
-export default User;
+export default Business;

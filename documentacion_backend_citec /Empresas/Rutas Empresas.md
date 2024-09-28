@@ -1,17 +1,17 @@
 #empresa #backend #crud 
 ### (GET) "backend-url/api/business/get-by-id/:id"
 #### Descripcion
-- Debe entregar el giro segun el codigo proporcionado
+- Se devuelve a una sola empresa segun la clave primaria
 
 #### Request
 ```js
 /*
 @brief
-"239200": Este es el codigo del giro que es enviado a través de la url
+"77.123.456-7": Este es el rut de la empresa que es enviado a través de la url
 */
 Request (url or params):
 
-"backend-url/api/business-line/get-by-id/239200"
+"backend-url/api/business-line/get-by-id/77.123.456-7"
 ```
 
 #### Response
@@ -19,12 +19,34 @@ Request (url or params):
 ```js
 /*
 @brief
-"nombre": Devuelve el nombre del giro
+Devuelve todos los datos de la empresa
 */
 Response (status:200)("success"):
 {
     "response": {
-        "nombre": "FABRICACIÓN DE MATERIALES DE CONSTRUCCIÓN DE ARCILLA",
+        "rut": "77.123.456-7",
+        "razon_social": "Empresa Spa",
+        "nombre_de_fantasia": "Panaderia el tony",
+        "email_factura": "factura@gmail.com",
+        "dirección": "calle o'higgins n°267",
+        "region": 1,
+        "provincia": 1,
+        "comuna":2,
+        "telefono": "+56912345678",
+        "contactos":[
+        {
+            "email": "contacto1@gmail.com",
+            "nombre": "Juan",
+            "cargo": "gerente",
+            "rut_empresa": "77.123.456-7"
+        },
+        {
+            "email": "contacto2@gmail.com",
+            "nombre": "Pedro",
+            "cargo": "bodega",
+            "rut_empresa": "77.123.456-7"
+        }
+    ]
     }
 }
 
@@ -42,7 +64,7 @@ Response (status:300s || 400s || 500s)("error"):
     "errors": [
         {
             "type": "field",
-            "msg": "codigo del giro incorrecto",
+            "msg": "rut de empresa incorrecto",
             "value": "11123",
             "path": "id",
             "location": "url"

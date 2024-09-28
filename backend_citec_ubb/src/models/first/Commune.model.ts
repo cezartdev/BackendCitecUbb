@@ -10,8 +10,8 @@ class Commune {
        
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                id_co int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID unico de la comuna',
-                id_pr int(11) NOT NULL COMMENT 'ID de la provincia asociada',
+                id_co int NOT NULL AUTO_INCREMENT COMMENT 'ID unico de la comuna',
+                id_pr int NOT NULL COMMENT 'ID de la provincia asociada',
                 str_descripcion varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre descriptivo de la comuna',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id_co)
@@ -374,7 +374,7 @@ class Commune {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla comunas:', err);
+            console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
         }
     }

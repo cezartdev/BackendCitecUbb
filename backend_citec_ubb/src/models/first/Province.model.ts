@@ -10,10 +10,10 @@ class Province {
        
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                id_pr int(11) NOT NULL COMMENT 'ID provincia',
-                id_re int(11) NOT NULL COMMENT 'ID region asociada',
+                id_pr int NOT NULL COMMENT 'ID provincia',
+                id_re int NOT NULL COMMENT 'ID region asociada',
                 str_descripcion varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre descriptivo',
-                num_comunas int(11) NOT NULL COMMENT 'Numero de comunas',
+                num_comunas int NOT NULL COMMENT 'Numero de comunas',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id_pr)
             )   ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de provincias de Chile';
@@ -83,7 +83,7 @@ class Province {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla provincias:', err);
+            console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
         }
     }

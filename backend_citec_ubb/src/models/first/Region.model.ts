@@ -10,11 +10,11 @@ class Region {
        
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                id_re int(11) NOT NULL COMMENT 'ID unico',
+                id_re int NOT NULL COMMENT 'ID unico',
                 str_descripcion varchar(60) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre extenso',
                 str_romano varchar(5) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Número de región',
-                num_provincias int(11) NOT NULL COMMENT 'total provincias',
-                num_comunas int(11) NOT NULL COMMENT 'Total de comunas',
+                num_provincias int NOT NULL COMMENT 'total provincias',
+                num_comunas int NOT NULL COMMENT 'Total de comunas',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id_re)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de regiones de Chile';
@@ -45,7 +45,7 @@ class Region {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla regiones:', err);
+            console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
         }
     }

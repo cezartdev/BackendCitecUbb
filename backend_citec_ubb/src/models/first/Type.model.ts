@@ -26,7 +26,7 @@ class Type {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla tipo:', err);
+            console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
         }
     }
