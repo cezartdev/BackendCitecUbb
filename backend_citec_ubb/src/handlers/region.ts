@@ -12,3 +12,12 @@ export const getAll = async (req: Request, res: Response) => {
     }
 };
 
+export const getById = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+        const response = await Region.getById(id);
+        res.status(200).json({ response });
+    } catch (err) {
+        res.status(500).json({ errors:err.message });
+    }
+};

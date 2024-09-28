@@ -63,10 +63,20 @@ class Region {
     }
 
     // Obtener por ID
+    static async getById(id: string): Promise<RowDataPacket> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id_re = ?`;
 
+        try {
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect,[id]);
+
+            return rows[0];
+        } catch (err) {
+            throw err;
+        }
+    }
 
     // Actualizar 
-
+    
 
 }
 
