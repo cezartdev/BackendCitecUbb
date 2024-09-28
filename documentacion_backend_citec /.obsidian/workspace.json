@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Contactos/Rutas Contactos.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "7ce10501402b8267",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Contactos/Rutas Contactos.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Contactos/Rutas Contactos.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md"
+                "file": "Contactos/Rutas Contactos.md"
               }
             }
           },
@@ -160,8 +159,8 @@
   },
   "active": "5fd61cb2a6725303",
   "lastOpenFiles": [
-    "Contactos/Rutas Contactos.md",
     "Giros o Actividad economica/Rutas Giros.md",
+    "Contactos/Rutas Contactos.md",
     "Rutas Usuarios/Rutas Usuarios.md",
     "Empresas/Rutas Empresas.md",
     "Contactos",

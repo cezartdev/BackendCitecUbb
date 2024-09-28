@@ -16,7 +16,7 @@ class Province {
                 num_comunas int(11) NOT NULL COMMENT 'Numero de comunas',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id_pr)
-            )   ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de regiones de Chile';
+            )   ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de provincias de Chile';
         `;
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (id_pr, id_re, str_descripcion, num_comunas) VALUES
