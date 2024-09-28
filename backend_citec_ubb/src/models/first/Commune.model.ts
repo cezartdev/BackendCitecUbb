@@ -14,7 +14,7 @@ class Commune {
                 id_pr int(11) NOT NULL COMMENT 'ID de la provincia asociada',
                 str_descripcion varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre descriptivo de la comuna',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id_co,id_pr)
+                PRIMARY KEY (id_co)
             )   ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de comunas por provincias';
         `;
         const insertDataQuery = `
