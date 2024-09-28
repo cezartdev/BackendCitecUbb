@@ -15,11 +15,12 @@ class Region {
                 str_romano varchar(5) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Número de región',
                 num_provincias int(11) NOT NULL COMMENT 'total provincias',
                 num_comunas int(11) NOT NULL COMMENT 'Total de comunas',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id_re)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de regiones de Chile';
         `;
         const insertDataQuery = `
-            INSERT INTO ${this.nombreTabla} VALUES 
+            INSERT INTO ${this.nombreTabla} (id_re,str_descripcion,str_romano,num_provincias,num_comunas) VALUES 
                 (1,'ARICA Y PARINACOTA','XV',2,4),
 				(2,'TARAPACÁ','I',2,7),
 				(3,'ANTOFAGASTA','II',3,9),
@@ -44,7 +45,7 @@ class Region {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla tipo:', err);
+            console.error('Error al inicializar la tabla regiones:', err);
             throw err;
         }
     }
