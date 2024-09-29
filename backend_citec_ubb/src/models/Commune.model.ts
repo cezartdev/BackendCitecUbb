@@ -4,7 +4,7 @@ import KeepFormatError from "../utils/KeepFormatErrors";
 
 class Commune {
     //Modelo SQL de la clase
-	static dependencies = ["tipos"];
+	static dependencies = ["provincias"];
     private static nombreTabla: string = "comunas";
 
 
