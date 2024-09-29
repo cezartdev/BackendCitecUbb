@@ -1,10 +1,9 @@
 import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import bcrypt from "bcrypt";
 import KeepFormatError from "../utils/KeepFormatErrors";
 
 class Business {
-
+    static dependencies = ["contactos", "regiones","provincias","comunas","cotizaciones","giros_empresas"];
     private static nombreTabla: string = "empresas";
 
     //Modelo SQL de la clase
@@ -22,14 +21,14 @@ class Business {
                 telefono VARCHAR(20) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (region) REFERENCES regiones(id),
-                FOREIGN KEY (provincia) REFERENCES provincias(id_pr),
-                FOREIGN KEY (comuna) REFERENCES comunas(id_co)
+                FOREIGN KEY (provincia) REFERENCES provincias(id),
+                FOREIGN KEY (comuna) REFERENCES comunas(id)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de usuarios para el Inicio de sesion';
         `;
      
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (rut,razon_social,nombre_de_fantasia,email_factura,direccion,region,provincia,comuna,telefono) VALUES
-            ('84.976.200-1', 'Cerámicas Santiago S.A.', 'Cerámicas Santiago S.A.','frios@ceramicasantiago.cl','Avda Italia 1000','9','1','1','+56912345678')
+            ('84.976.200-1', 'Cerámicas Santiago S.A.', 'Cerámicas Santiago S.A.','frios@ceramicasantiago.cl','Avda Italia 1000','15','11','1101','+56912345678')
             ON DUPLICATE KEY UPDATE rut = VALUES(rut);
         `;
 

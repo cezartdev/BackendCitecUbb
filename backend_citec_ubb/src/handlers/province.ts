@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Province from "../models/first/Province.model";
+import Province from "../models/Province.model";
 
 
 export const getAll = async (req: Request, res: Response) => {

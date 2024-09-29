@@ -1,8 +1,9 @@
-import db from "../../config/db"
+import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import KeepFormatError from "../../utils/KeepFormatErrors";
+import KeepFormatError from "../utils/KeepFormatErrors";
 
 class Type {
+    static dependencies = [];
     private static nombreTabla: string = "tipos";
 
     //Modelo SQL de la clase

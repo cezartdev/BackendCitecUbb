@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import KeepFormatError from "../utils/KeepFormatErrors";
 
 class User {
-
+    static dependencies = ["tipos"];
     private static nombreTabla: string = "usuarios";
 
     //Modelo SQL de la clase

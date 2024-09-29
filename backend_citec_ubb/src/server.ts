@@ -7,38 +7,64 @@ import fs from 'fs';
 import path from 'path';
 
 const initDb = async () => {
-    const modelsFirstPath = path.join(__dirname, 'models', 'first');  // Ruta a la carpeta 'models/first'
-    const modelsPath = path.join(__dirname, 'models');  // Ruta a la carpeta 'models'
+    const modelsPath = path.join(__dirname, 'models');
+    const models = [];
 
-    try {
-        // Función auxiliar para inicializar tablas de una carpeta específica
-        const initializeTablesFromFolder = async (folderPath: string) => {
-            // Leer todos los archivos en la carpeta
-            const files = fs.readdirSync(folderPath);
+    // Leer todos los archivos de modelos
+    const files = fs.readdirSync(modelsPath);
+    for (const file of files) {
+        if (file.endsWith('.ts') || file.endsWith('.js')) {
+            const model = require(path.join(modelsPath, file));
+            if (model.default && typeof model.default.initTable === 'function') {
+                models.push(model.default);  // Agregar el modelo a la lista
+            }
+        }
+    }
 
-            for (const file of files) {
-                // Verificar que el archivo es un archivo TypeScript o JavaScript
-                if (file.endsWith('.ts') || file.endsWith('.js')) {
-                    // Importar el archivo dinámicamente usando require()
-                    const model = require(path.join(folderPath, file));
+    // Función para ordenar modelos según dependencias
+    const orderModelsByDependencies = (models) => {
+        const ordered = [];
+        const seen = new Set();
+        const visiting = new Set();  // Para detectar ciclos
 
-                    // Verificar si el archivo importado tiene el método 'initTable'
-                    if (model.default && typeof model.default.initTable === 'function') {
-                        await model.default.initTable();  // Llamar al método initTable
-                        console.log(`Tabla inicializada desde: ${file}`);
-                    }
+        const visit = (model) => {
+            if (seen.has(model)) return;
+            if (visiting.has(model)) {
+                throw new Error(`Ciclo detectado en las dependencias de la tabla ${model.nombreTabla}`);
+            }
+
+            visiting.add(model);
+
+            // Asegurarse de que las dependencias se inicialicen primero
+            for (const dependency of model.dependencies || []) {
+                const dependencyModel = models.find(m => m.nombreTabla === dependency);
+                if (dependencyModel) {
+                    visit(dependencyModel);
+                } else {
+                    console.warn(`Dependencia ${dependency} no encontrada para la tabla ${model.nombreTabla}`);
                 }
             }
+
+            visiting.delete(model);
+            seen.add(model);
+            ordered.push(model);
         };
 
-        // Inicializar las tablas desde 'models/first'
-        if (fs.existsSync(modelsFirstPath)) {
-            await initializeTablesFromFolder(modelsFirstPath);
+        for (const model of models) {
+            visit(model);
         }
 
-        // Inicializar las tablas desde 'models'
-        if (fs.existsSync(modelsPath)) {
-            await initializeTablesFromFolder(modelsPath);
+        return ordered;
+    };
+
+    try {
+        // Ordenar modelos según dependencias
+        const orderedModels = orderModelsByDependencies(models);
+
+        // Inicializar las tablas en orden
+        for (const model of orderedModels) {
+            await model.initTable();
+            console.log(`Tabla inicializada: ${model.nombreTabla}`);
         }
 
         console.log('Todas las tablas han sido inicializadas correctamente.');

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Commune from "../models/first/Commune.model";
+import Commune from "../models/Commune.model";
 
 
 export const getAll = async (req: Request, res: Response) => {

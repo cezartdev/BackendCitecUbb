@@ -1,9 +1,10 @@
-import db from "../../config/db"
+import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
-import KeepFormatError from "../../utils/KeepFormatErrors";
+import KeepFormatError from "../utils/KeepFormatErrors";
 
 class Region {
     //Modelo SQL de la clase
+    static dependencies = [];
     private static nombreTabla: string = "regiones";
 
     static async initTable(): Promise<void> {
@@ -64,7 +65,7 @@ class Region {
 
     // Obtener por ID
     static async getById(id: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id_re = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
 
         try {
             const [rows] = await db.execute<RowDataPacket[]>(querySelect,[id]);
