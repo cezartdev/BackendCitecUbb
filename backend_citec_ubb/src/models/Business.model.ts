@@ -124,6 +124,7 @@ class Business {
     // Actualizar completamente una empresa PUT
     static async update(
         rut: string,
+        nuevo_rut: string,
         razonSocial: string,
         nombreDeFantasia: string,
         emailFactura: string,
@@ -131,7 +132,7 @@ class Business {
         comuna: string,
         telefono: string
     ): Promise<RowDataPacket> {
-        const queryUpdate = `UPDATE ${this.nombreTabla} SET razon_social = ?, nombre_de_fantasia = ?, email_factura = ?, direccion = ?, comuna = ?, telefono = ? WHERE rut = ?`;
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET rut = ?, razon_social = ?, nombre_de_fantasia = ?, email_factura = ?, direccion = ?, comuna = ?, telefono = ? WHERE rut = ?`;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
         const queryCommune = `SELECT * FROM comunas WHERE id = ?`;
         try {
@@ -172,6 +173,7 @@ class Business {
 
             // Ejecutar la consulta de actualización completa
             await db.execute<ResultSetHeader>(queryUpdate, [
+                nuevo_rut,
                 razonSocial,
                 nombreDeFantasia,
                 emailFactura,
@@ -183,27 +185,35 @@ class Business {
 
             // Retornar la empresa actualizada
             const [updatedBusiness] = await db.execute<RowDataPacket[]>(querySelect, [
-                rut,
+                nuevo_rut,
             ]);
+
             return updatedBusiness[0];
         } catch (err) {
+
             throw err;
         }
     }
-
+    //TODO: Queda implementar funcion
     // Actualizar parcialmente una empresa PATCH
     static async partialUpdate(
         rut: string,
-        fieldsToUpdate: Partial<{ razon_social: string; nombre_de_fantasia: string; email_factura: string; direccion: string; comuna: string; telefono: string; }>
+        fieldsToUpdate: Partial<{nuevo_rut: string, razon_social: string; nombre_de_fantasia: string; email_factura: string; direccion: string; comuna: string; telefono: string; }>
     ): Promise<RowDataPacket> {
         let queryUpdate = `UPDATE ${this.nombreTabla} SET `;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
-
+        const queryCommune = `SELECT * FROM comunas WHERE id = ?`;
+        
         const fields = [];
         const values = [];
 
         // Construimos dinámicamente la consulta solo con los campos proporcionados
         for (const [key, value] of Object.entries(fieldsToUpdate)) {
+            if(key === "nuevo_rut" && value !== undefined && value !== null){
+                fields.push(`rut = ?`);
+                values.push(value);
+                continue
+            }
             if (value !== undefined && value !== null) {
                 fields.push(`${key} = ?`);
                 values.push(value);
@@ -219,6 +229,7 @@ class Business {
         queryUpdate += fields.join(", ") + ` WHERE rut = ?`;
         values.push(rut);
 
+
         try {
             // Se comprueba si la empresa ya existe
             const [existingBusiness] = await db.execute<RowDataPacket[]>(querySelect, [rut]);
@@ -226,14 +237,39 @@ class Business {
                 const errors = [{ type: "field", msg: "La empresa que intenta actualizar no existe", value: rut, path: "rut", location: "body" }];
                 throw new KeepFormatError(errors);
             }
+            
+            //Si se pasa por parametro comuna se verifica que exista
+            const newCommune = Object.entries(fieldsToUpdate)[5][1];
+            if(newCommune){
+                const [commune] = await db.execute<RowDataPacket[]>(queryCommune, [newCommune]);
+                if (!commune[0]) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "Comuna no encontrada",
+                            value: `${newCommune}`,
+                            path: "comuna",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors);
+                }
+
+            }
 
             // Ejecutar la consulta de actualización parcial
             await db.execute<ResultSetHeader>(queryUpdate, values);
-
+            // Si existe el un rut nuevo se cambia
+            const newRut = Object.entries(fieldsToUpdate)[0][1];
+            let queryRut = rut;
+            if(newRut){
+                queryRut = newRut;
+            }
             // Retornar la empresa actualizada
-            const [updatedBusiness] = await db.execute<RowDataPacket[]>(querySelect, [rut]);
+            const [updatedBusiness] = await db.execute<RowDataPacket[]>(querySelect, [queryRut]);
             return updatedBusiness[0];
         } catch (err) {
+            console.log(err)
             throw err;
         }
     }

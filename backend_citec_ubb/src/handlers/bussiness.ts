@@ -33,9 +33,20 @@ export const deleteBusiness = async (req: Request, res: Response) => {
 
 export const updateAllBusiness = async (req: Request, res: Response) => {
 
-    const {rut,razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
+    const {rut,nuevo_rut,razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
     try {
-        const response = await Business.update(rut,razon_social,nombre_de_fantasia,email_factura,direccion,comuna,telefono);
+        const response = await Business.update(rut,nuevo_rut,razon_social,nombre_de_fantasia,email_factura,direccion,comuna,telefono);
+        res.status(200).json({msg:"Empresa Actualizada correctamente", response });
+    } catch (err) {
+        res.status(500).json({ errors: err.details });
+    }
+};
+
+export const updatePartialBusiness = async (req: Request, res: Response) => {
+
+    const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
+    try {
+        const response = await Business.partialUpdate(rut,{nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono});
         res.status(200).json({msg:"Empresa Actualizada correctamente", response });
     } catch (err) {
         res.status(500).json({ errors: err.details });
