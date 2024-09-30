@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {body, param} from "express-validator"
-import {createBusiness, deleteBusiness, getAll,updateAllBusiness, updatePartialBusiness} from "../handlers/bussiness"
+import {createBusiness, deleteBusiness, getAll, getById, updateAllBusiness, updatePartialBusiness} from "../handlers/bussiness"
 import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "../middleware/index"
 
 const router = Router();
@@ -134,5 +134,13 @@ router.patch("/update",
     updatePartialBusiness);
 
 router.get("/get-all", getAll);
+
+router.get("/get-by-id/:rut",
+    param("rut")
+        .notEmpty().withMessage("El rut esta vacio")
+        .matches(rutRegex).withMessage("Formato de rut invalido. Debe ser '11.111.111-1'"),
+    handleInputErrors,
+    getById);
+
 
 export default router;

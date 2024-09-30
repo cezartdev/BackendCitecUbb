@@ -39,7 +39,6 @@ class Business {
         }
     }
 
-    //TODO: Cambiar tipo de dato de las busquedas e inserciones RowDataPacket
     // Crear
     static async create(
         rut: string,
@@ -120,6 +119,30 @@ class Business {
     }
 
     // Obtener por ID
+    static async getById(rut: string): Promise<RowDataPacket> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
+
+        try {
+            const [business] = await db.execute<RowDataPacket[]>(querySelect,[rut]);
+			if (!business[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Empresa no encontrada",
+                        value: `${rut}`,
+                        path: "rut",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+
+            return business[0];
+        } catch (err) {
+            throw err;
+        }
+    }
+
 
     // Actualizar completamente una empresa PUT
     static async update(
@@ -194,7 +217,7 @@ class Business {
             throw err;
         }
     }
-    //TODO: Queda implementar funcion
+
     // Actualizar parcialmente una empresa PATCH
     static async partialUpdate(
         rut: string,
