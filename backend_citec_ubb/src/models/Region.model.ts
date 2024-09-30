@@ -55,9 +55,20 @@ class Region {
         const querySelect = `SELECT * FROM ${this.nombreTabla}`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
-
-            return rows;
+            const [region] = await db.execute<RowDataPacket[]>(querySelect);
+            if (!region[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen regiones",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+            return region;
         } catch (err) {
             throw err;
         }
@@ -68,17 +79,24 @@ class Region {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect,[id]);
-
-            return rows[0];
+            const [region] = await db.execute<RowDataPacket[]>(querySelect,[id]);
+            if (!region[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Region no encontrada",
+                        value: `${id}`,
+                        path: "id",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+            return region[0];
         } catch (err) {
             throw err;
         }
     }
-
-    // Actualizar 
-    
-
 }
 
 export default Region;

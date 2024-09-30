@@ -388,9 +388,20 @@ class Commune {
         const querySelect = `SELECT * FROM ${this.nombreTabla}`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
-
-            return rows;
+            const [commune] = await db.execute<RowDataPacket[]>(querySelect);
+			if (!commune[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen comunas",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+            return commune;
         } catch (err) {
             throw err;
         }
@@ -398,12 +409,25 @@ class Commune {
 
     // Obtener por ID
     static async getById(id: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id_co = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect,[id]);
+            const [commune] = await db.execute<RowDataPacket[]>(querySelect,[id]);
+			if (!commune[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Comuna no encontrada",
+                        value: `${id}`,
+                        path: "id",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
 
-            return rows[0];
+
+            return commune[0];
         } catch (err) {
             throw err;
         }

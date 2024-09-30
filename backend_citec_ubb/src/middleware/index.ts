@@ -30,3 +30,26 @@ export const handlePasswordEncrypt = async (req: Request,res:Response, next: Nex
         return res.status(500).json({ response: {msg:"Error encriptando la contraseña" }});
     }
 }
+
+// Middleware generalizado para normalizar campos según la configuración
+export const normalizeFieldsGeneral = (config) => (req: Request, res:Response, next: NextFunction) => {
+    // Iterar sobre la configuración y aplicar las transformaciones
+    Object.keys(config).forEach(field => {
+        if (req.body[field]) {
+            const transformation = config[field];
+            
+            // Aplicar la transformación dependiendo del valor en la configuración
+            if (transformation === 'lowercase') {
+                req.body[field] = req.body[field].toLowerCase();
+            } else if (transformation === 'uppercase') {
+                req.body[field] = req.body[field].toUpperCase();
+            } else if (transformation === 'capitalize') {
+                req.body[field] = req.body[field].split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+            }
+        }
+    });
+
+    next();
+};

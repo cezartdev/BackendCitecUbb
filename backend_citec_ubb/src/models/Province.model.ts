@@ -106,12 +106,23 @@ class Province {
 
     // Obtener por ID
     static async getById(id: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id_re = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect,[id]);
-
-            return rows[0];
+            const [province] = await db.execute<RowDataPacket[]>(querySelect,[id]);
+			if (!province[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Provincia no encontrada",
+                        value: `${id}`,
+                        path: "id",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+            return province[0];
         } catch (err) {
             throw err;
         }
