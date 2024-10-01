@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {body, param} from "express-validator"
-import {createBusiness, deleteBusiness, getAll, getById, updateAllBusiness, updatePartialBusiness} from "../handlers/bussiness"
+import {createBusiness, deleteBusiness, getAll, getById, updateAllBusiness, updatePartialBusiness} from "../handlers/business"
 import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "../middleware/index"
 
 const router = Router();

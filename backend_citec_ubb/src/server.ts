@@ -73,7 +73,10 @@ const initDb = async () => {
     }
 };
 
-initDb();
+if(process.env.NODE_ENV !== 'test'){
+    initDb();
+}
+
 
 const server = express()
 
@@ -92,8 +95,6 @@ server.use(cors(corsOptions))
 
 server.use(express.json())
 
-
 server.use("/api", router)
-
 
 export default server
