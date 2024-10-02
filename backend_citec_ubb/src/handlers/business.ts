@@ -25,7 +25,7 @@ export const getById = async (req: Request, res: Response) => {
     const rut = req.params.rut;
     try {
         const response = await Business.getById(rut);
-        res.status(200).json({ msg: "Empresa creada correctamente", response});
+        res.status(200).json({ msg: "Empresa obtenida correctamente", response});
     } catch (err) {
         
         res.status(500).json({ errors: err.details });
