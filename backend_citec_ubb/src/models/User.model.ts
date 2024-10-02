@@ -4,10 +4,13 @@ import bcrypt from "bcrypt";
 import KeepFormatError from "../utils/KeepFormatErrors";
 
 class User {
+    static dependencies = ["tipos"];
+    private static nombreTabla: string = "usuarios";
+
     //Modelo SQL de la clase
     static async initTable(): Promise<void> {
         const createTableQuery = `
-            CREATE TABLE IF NOT EXISTS usuarios (
+            CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 email VARCHAR(200) PRIMARY KEY,
                 nombre VARCHAR(50) NOT NULL,
                 apellido VARCHAR(50) NOT NULL,
@@ -15,7 +18,7 @@ class User {
                 nombre_tipo VARCHAR(30) NOT NULL,
                 FOREIGN KEY (nombre_tipo) REFERENCES tipos(nombre),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de usuarios para el Inicio de sesion';
         `;
         
         const saltRounds = 10;
@@ -26,7 +29,7 @@ class User {
         const hashedUserPassword = await bcrypt.hash(passwordDefaultUser, saltRounds);
 
         const insertDataQuery = `
-            INSERT INTO usuarios (email, nombre, apellido,contraseña,nombre_tipo) VALUES
+            INSERT INTO ${this.nombreTabla} (email, nombre, apellido,contraseña,nombre_tipo) VALUES
             ('admin@gmail.com', 'admin', 'admin','${hashedAdminPassword}','admin'),
             ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario')
             ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
@@ -38,27 +41,32 @@ class User {
             // Insertar valores por defecto si es necesario
             await db.query(insertDataQuery);
         } catch (err) {
-            console.error('Error al inicializar la tabla usuarios:', err);
+            console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
         }
     }
 
 
     // Crear un nuevo usuario
-    static async create( email: string, nombre: string, apellido: string, contraseña: string, tipo: string): Promise<RowDataPacket> {
-        const queryInsert = 'INSERT INTO usuarios (email, nombre, apellido, contraseña, tipo) VALUES (?, ?, ?, ?, ?)';
-        const querySelect = 'SELECT * FROM usuarios WHERE email = ?';
-        
+    static async create( email: string, nombre: string, apellido: string, contraseña: string, nombre_tipo: string): Promise<RowDataPacket> {
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (email, nombre, apellido, contraseña, nombre_tipo) VALUES (?, ?, ?, ?, ?)`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
+        const queryType = `SELECT * FROM tipos WHERE nombre = ?`
         try {
-            // Ejecuta la consulta de inserción
-            const [result] = await db.execute<ResultSetHeader>(queryInsert, [email, nombre, apellido, contraseña,tipo]);
 
-            console.log(result);
-            // Obtenemos el id del usuario recién creado
-            const insertId = result.insertId;
+            //TODO: Falta crear la validacion del tipo
+            const [type] = await db.execute<ResultSetHeader>(queryType, [nombre_tipo]);
+
+            if(!type[0]){
+                const errors = [{type:"field",msg:"Error al crear usuario",value:`${nombre_tipo}`, path:"nombre_tipo",location:"body"}]
+                throw new KeepFormatError(errors);
+            }
+            // Ejecuta la consulta de inserción
+            const [result] = await db.execute<ResultSetHeader>(queryInsert, [email, nombre, apellido, contraseña,nombre_tipo]);
+
 
             // Ejecutamos la consulta para obtener los datos completos del usuario
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [insertId]);
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [email]);
 
             // Devolvemos el usuario creado
             return rows[0]; // Como es solo un usuario, devolvemos el primer (y único) elemento
@@ -69,7 +77,7 @@ class User {
 
     // Login usuario
     static async login( email: string, contraseña: string): Promise<RowDataPacket> {
-        const querySelect = 'SELECT * FROM usuarios WHERE email = ?';
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
         
         try {
             
@@ -103,7 +111,17 @@ class User {
 
 
     // Obtener todos los usuarios
+    static async getAll(): Promise<RowDataPacket[]> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla}`;
+        
+        try {
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
 
+            return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     // Obtener un usuario por ID
 
@@ -112,7 +130,26 @@ class User {
 
 
     // Eliminar un usuario
+    static async delete(id: string): Promise<RowDataPacket> {
+        const queryDelete = `DELETE FROM ${this.nombreTabla} WHERE email = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`
+        try {
+            const [user] = await db.execute<RowDataPacket[]>(querySelect, [id]);
+            const userDelete = user[0];
 
+            if(!user[0]){
+                const errors = [{type:"field",msg:"Usuario no encontrado",value:`id`, path:"params",location:"url"}]
+                throw new KeepFormatError(errors);
+            }
+
+            const [rows] = await db.execute<RowDataPacket[]>(queryDelete, [id]);
+
+
+            return userDelete;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default User;

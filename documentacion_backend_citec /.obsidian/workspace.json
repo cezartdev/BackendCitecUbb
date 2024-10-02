@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "4893190c87f01bec",
+        "id": "93a27a7f4d2d1394",
         "type": "tabs",
         "children": [
           {
-            "id": "5fd61cb2a6725303",
+            "id": "8d8285199c254c7f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Empresas/Rutas Empresas.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Empresas/Rutas Empresas.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md",
+                "file": "Empresas/Rutas Empresas.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Giros o Actividad economica/Rutas Giros.md"
+                "file": "Empresas/Rutas Empresas.md"
               }
             }
           },
@@ -158,12 +158,12 @@
       "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "5fd61cb2a6725303",
+  "active": "8d8285199c254c7f",
   "lastOpenFiles": [
-    "Contactos/Rutas Contactos.md",
-    "Giros o Actividad economica/Rutas Giros.md",
     "Rutas Usuarios/Rutas Usuarios.md",
     "Empresas/Rutas Empresas.md",
+    "Contactos/Rutas Contactos.md",
+    "Giros o Actividad economica/Rutas Giros.md",
     "Contactos",
     "README.md",
     "Conversación Citec 13-09-2024.md",
