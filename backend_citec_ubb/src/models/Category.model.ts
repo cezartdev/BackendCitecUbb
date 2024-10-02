@@ -3,6 +3,8 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import KeepFormatError from "../utils/KeepFormatErrors";
 
 class Category {
+    static dependencies = [];
+    private static nombreTabla: string = "categorias";
     //modelo SQL de la clase
     static async initTable(): Promise<void> {
         const createTableQuery = `
@@ -13,13 +15,12 @@ class Category {
         `;
         const insertDataQuery = `
             INSERT INTO categorias (nombre) VALUES
-            ('INDUSTRIA MANUFACTURERA'),
-            ('CONSTRUCCIÓN'),
-            ('COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHICULOS AUTOMOTORES Y MOTOCICLETAS'),
-            ('AGRICULTURA, GANADERÍA, SILVICULTURA Y PESCA'),
-            ('SUMINISTRO DE ELECTRICIDAD, GAS, VAPOR Y AIRE ACONDICIONADO')
-
-            ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
+                ('INDUSTRIA MANUFACTURERA'),
+                ('CONSTRUCCIÓN'),
+                ('COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHICULOS AUTOMOTORES Y MOTOCICLETAS'),
+                ('AGRICULTURA, GANADERÍA, SILVICULTURA Y PESCA'),
+                ('SUMINISTRO DE ELECTRICIDAD, GAS, VAPOR Y AIRE ACONDICIONADO')
+                ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 
         try {
