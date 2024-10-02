@@ -4,8 +4,8 @@
         "rootDir": "./src",
         "lib":["ESNext"],
         "target": "ESNext",
-        "moduleResolution": "NodeNext",
-        "module":"NodeNext",
+        "moduleResolution": "Node",
+        "module": "CommonJS",  // Cambia a CommonJS
         "strict": false,
         "sourceMap": true,
         "esModuleInterop": true,
