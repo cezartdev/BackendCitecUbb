@@ -4,12 +4,12 @@
         "rootDir": "./src",
         "lib":["ESNext"],
         "target": "ESNext",
-        "moduleResolution": "Node",
-        "module": "CommonJS",  // Cambia a CommonJS
+        "moduleResolution": "NodeNext",
+        "module":"NodeNext",
         "strict": false,
         "sourceMap": true,
         "esModuleInterop": true,
-        "declaration": true,
+        "declaration": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
