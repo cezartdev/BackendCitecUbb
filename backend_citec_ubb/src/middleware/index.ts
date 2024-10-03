@@ -16,6 +16,12 @@ export const handlePasswordEncrypt = async (req: Request,res:Response, next: Nex
     
     const saltRounds = 10;
     const { contraseña } = req.body;
+   
+    if(!contraseña){
+        next();
+        return;
+    }
+    
     try {
         // Genera el hash de la contraseña
         const hashedPassword = await bcrypt.hash(contraseña, saltRounds);
@@ -27,7 +33,7 @@ export const handlePasswordEncrypt = async (req: Request,res:Response, next: Nex
         next();
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ response: {msg:"Error encriptando la contraseña" }});
+        return res.status(500).json({ errors: [{msg:"Error encriptando la contraseña" }]});
     }
 }
 

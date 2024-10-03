@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {body, param} from "express-validator"
-import {createUser, loginUser, getAll, deleteUser, updateAllUser} from "../handlers/user"
+import {createUser, loginUser, getAll, deleteUser, updateAllUser, getById, updatePartialUser} from "../handlers/user"
 import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "../middleware/index"
 
 const router = Router();
@@ -193,6 +193,17 @@ router.post("/login",
 
 router.get("/get-all", getAll);
 
+const configById = {
+    "email": "lowercase"
+};
+router.get("/get-by-id/:email",
+    param("email")
+        .notEmpty().withMessage("El email está vacio")
+        .isEmail().withMessage("El email no está en el formato correcto"),
+    handleInputErrors,
+    normalizeFieldsGeneral(configById),
+    getById);
+
 const configUpdate = {
     "email": "lowercase",
     "nuevo_email": "lowercase",
@@ -200,7 +211,6 @@ const configUpdate = {
     "apellido": "capitalize",     
     "nombre_tipo": "lowercase"
 };
-
 router.put("/update",
     body("email")
         .notEmpty().withMessage("El email esta vacío")
@@ -223,6 +233,30 @@ router.put("/update",
     handlePasswordEncrypt,
     normalizeFieldsGeneral(configUpdate),
     updateAllUser);
+
+router.patch("/update",
+    body("email")
+        .notEmpty().withMessage("El email esta vacío")
+        .isEmail().withMessage("El email no está en el formato correcto"),
+    body("nuevo_email")
+        .optional()
+        .isEmail().withMessage("El nuevo email no está en el formato correcto"),
+    body("nombre")
+        .optional()
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("apellido")
+        .optional()
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("contraseña")
+        .optional()
+        .notEmpty().withMessage("La contraseña no puede estar vacia"),
+    body("nombre_tipo")
+        .optional()
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    handleInputErrors,
+    handlePasswordEncrypt,
+    normalizeFieldsGeneral(configUpdate),
+    updatePartialUser);
 
 
 const configDelete = {

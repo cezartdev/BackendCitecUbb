@@ -18,6 +18,7 @@ export const getById = async (req: Request, res: Response) => {
         const response = await Region.getById(id);
         res.status(200).json({ msg: "Region seleccionada correctamente", response });
     } catch (err) {
-        res.status(500).json({ errors: err.details });
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
     }
 };

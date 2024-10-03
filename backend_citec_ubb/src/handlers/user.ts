@@ -21,6 +21,17 @@ export const getAll = async (req: Request, res: Response) => {
     }
 };
 
+export const getById = async (req: Request, res: Response) => {
+    const email = req.params.email;
+    try {
+        const response = await User.getById(email);
+        res.status(200).json({ msg: "Usuario seleccionado correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};
+
 export const deleteUser = async (req: Request, res: Response) => {
     const email = req.params.email;
     try {
@@ -35,19 +46,30 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
     const {email, contraseña} = req.body;
     try {
-        
         const response = await User.login(email,contraseña);
         res.status(200).json({login_status:true, response });
     } catch (err) {
-        res.status(500).json({ errors:err.details });
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
     }
 };
 
 export const updateAllUser = async (req: Request, res: Response) => {
 
-    const {email, nuevo_email, nombre, apellido, contraseña, nombre_tipo } = req.body;
+    const { email, nuevo_email, nombre, apellido, contraseña, nombre_tipo } = req.body;
     try {
         const response = await User.update(email, nuevo_email, nombre, apellido, contraseña, nombre_tipo);
+        res.status(201).json({msg:"Usuario Actualizado correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};
+
+export const updatePartialUser = async (req: Request, res: Response) => {
+    const { email, nuevo_email, nombre, apellido, contraseña, nombre_tipo } = req.body;
+    try {
+        const response = await User.partialUpdate(email,{nuevo_email, nombre, apellido, contraseña, nombre_tipo});
         res.status(200).json({msg:"Usuario Actualizado correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;

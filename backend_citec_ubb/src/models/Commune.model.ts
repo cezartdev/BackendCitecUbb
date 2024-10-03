@@ -399,7 +399,7 @@ class Commune {
                         location: "",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors,404);
             }
             return commune;
         } catch (err) {
@@ -423,7 +423,7 @@ class Commune {
                         location: "params",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
 
 
