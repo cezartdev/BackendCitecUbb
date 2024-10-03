@@ -67,7 +67,7 @@ class Business {
                         location: "body",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
             //Se comprueba si la empresa ya existe
             const [queryBusiness] = await db.execute<RowDataPacket[]>(querySelect, [
@@ -83,7 +83,7 @@ class Business {
                         location: "body",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 409);
             }
             // Ejecuta la consulta de inserción
             await db.execute<ResultSetHeader>(queryInsert, [
@@ -134,7 +134,7 @@ class Business {
                         location: "params",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
 
             return business[0];
@@ -174,7 +174,7 @@ class Business {
                         location: "body",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
 
             //Se comprueba si la comuna existe
@@ -191,7 +191,28 @@ class Business {
                         location: "body",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
+            }
+
+            // Se comprueba si el nuevo_email pertenece a otro usuario
+            const [existingOtherBusiness] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [nuevo_rut]
+            );
+
+
+            if (existingOtherBusiness[0] && rut !== nuevo_rut) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El nuevo rut pertenece a otra empresa",
+                        value: nuevo_rut,
+                        path: "nuevo_rut",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+
             }
 
             // Ejecutar la consulta de actualización completa
@@ -246,7 +267,7 @@ class Business {
         // Si no hay campos para actualizar, lanzamos un error
         if (fields.length === 0) {
             const errors = [{ type: "field", msg: "No hay campos para actualizar", value: rut, path: "rut", location: "body" }];
-            throw new KeepFormatError(errors);
+            throw new KeepFormatError(errors, 400);
         }
 
         queryUpdate += fields.join(", ") + ` WHERE rut = ?`;
@@ -258,9 +279,31 @@ class Business {
             const [existingBusiness] = await db.execute<RowDataPacket[]>(querySelect, [rut]);
             if (!existingBusiness[0]) {
                 const errors = [{ type: "field", msg: "La empresa que intenta actualizar no existe", value: rut, path: "rut", location: "body" }];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
             
+            const newRutBusiness = Object.entries(fieldsToUpdate)[0][1];
+            if(newRutBusiness){
+                const [existingOtherBusiness] = await db.execute<RowDataPacket[]>(
+                    querySelect,
+                    [newRutBusiness]
+                );
+    
+                if (existingOtherBusiness[0] && rut !== newRutBusiness) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "El nuevo rut le pertenece a otra empresa",
+                            value: newRutBusiness,
+                            path: "nuevo_rut",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 409);
+    
+                }
+            }
+
             //Si se pasa por parametro comuna se verifica que exista
             const newCommune = Object.entries(fieldsToUpdate)[5][1];
             if(newCommune){
@@ -275,14 +318,14 @@ class Business {
                             location: "body",
                         },
                     ];
-                    throw new KeepFormatError(errors);
+                    throw new KeepFormatError(errors, 404);
                 }
 
             }
 
             // Ejecutar la consulta de actualización parcial
             await db.execute<ResultSetHeader>(queryUpdate, values);
-            // Si existe el un rut nuevo se cambia
+            // Si existe un rut nuevo se cambia
             const newRut = Object.entries(fieldsToUpdate)[0][1];
             let queryRut = rut;
             if(newRut){
@@ -292,7 +335,6 @@ class Business {
             const [updatedBusiness] = await db.execute<RowDataPacket[]>(querySelect, [queryRut]);
             return updatedBusiness[0];
         } catch (err) {
-            console.log(err)
             throw err;
         }
     }
@@ -313,7 +355,7 @@ class Business {
                         location: "params",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
 
             await db.execute<ResultSetHeader>(queryDelete, [rut]);
