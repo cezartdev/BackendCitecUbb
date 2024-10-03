@@ -4,7 +4,34 @@ import {createBusiness, deleteBusiness, getAll, getById, updateAllBusiness, upda
 import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "../middleware/index"
 
 const router = Router();
-
+/**
+* @swagger
+* components:
+*       schemas:
+*           Empresa:
+*               type: object
+*               properties:
+*                   email:
+*                       type: string
+*                       description: Email del usuario
+*                       example: admin@gmail.com
+*                   nombre:
+*                       type: string
+*                       description: El nombre del usuario
+*                       example: Juan
+*                   apellido:
+*                       type: string
+*                       description: El apellido del usuario
+*                       example: Perez
+*                   contraseña:
+*                       type: string
+*                       description: La contraseña del usuario hasheada
+*                       example: 1@.0//as+K
+*                   nombre_tipo:
+*                       type: string
+*                       description: El tipo de usuario
+*                       example: gerente
+*/
 
 const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
 const phoneRegex = /^(?:\+569\d{8}|[2-9]\d{8})$/;

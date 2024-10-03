@@ -1,0 +1,29 @@
+import swaggerJSDoc from "swagger-jsdoc";
+
+
+const options: swaggerJSDoc.Options = {
+    swaggerDefinition: {
+        openapi: '3.0.2',
+        tags:[
+            {
+                name:'Usuarios',
+                description: 'Rutas relacionadas con los Usuarios'
+            },
+            {
+                name:'Empresas',
+                description: 'Rutas relacionadas con las Empresas'
+            }
+        ],
+        info:{
+            title: '(REST API) Documentacion backend para proyecto Citec UBB',
+            version:'1.0.0',
+            description:'Se usan las siguientes tecnologias:\n - TypeScript\n - Express\n - MySql\n\n - Jest\n\n - Node.js\n\n Codigo de estados:\n - 200 Solicitud exitosa (OK): Se devuelve la informacion correcta \n\n - 201 Recurso creado correctamente (Created): Para metodo POST o PUT y creacion de recursos en general  \n\n - 400 Peticion mal hecha (Bad Request): El Request se envio con los campos incorrectos \n\n - 403 No se poseen los permisos (Forbidden): El cliente o usuario no tiene los permisos necesarios \n\n - 404 No se encuentra el recurso (Not Found): El servidor no pudo encontrar el contenido solicitado \n\n - 409 Conflicto para devolver la informacion (Conflict): El recurso ya existe o esta duplicado. \n\n - 500 Error interno del servidor (Internal Server Error): El servidor no sabe como manejar el Request. Ruta no implementada o error inesperado'
+        }
+    },
+    apis:['./src/routes/*.{ts,js}']
+
+
+}
+
+const swaggerSpec = swaggerJSDoc(options);
+export default swaggerSpec;

@@ -2,6 +2,8 @@ import express from "express"
 import router from "./router"
 import db from "./config/db"
 import colors from "colors"
+import swaggerUi from "swagger-ui-express"
+import swaggerSpec from "./config/swagger"
 import cors , {CorsOptions} from "cors"
 import fs from 'fs';
 import path from 'path';
@@ -83,7 +85,7 @@ const server = express()
 const corsOptions : CorsOptions = {
     origin: function(origin,callback){
         console.log(`Query Origin: ${colors.bgYellow.white.bold(origin)}`)
-        if(origin === process.env.FRONTEND_URL || origin === undefined){
+        if(origin === process.env.FRONTEND_URL || origin === undefined || origin === 'http://localhost:4000'){
             callback(null, true)
         }else{
             callback(new Error("Error de CORS"),false)
@@ -97,4 +99,6 @@ server.use(express.json())
 
 server.use("/api", router)
 
+
+server.use("/docs", swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 export default server
