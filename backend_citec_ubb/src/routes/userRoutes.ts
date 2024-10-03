@@ -1,7 +1,7 @@
 import {Router} from "express"
-import {body} from "express-validator"
-import {createUser,loginUser,getAll, deleteUser} from "../handlers/user"
-import {handleInputErrors, handlePasswordEncrypt} from "../middleware/index"
+import {body, param} from "express-validator"
+import {createUser, loginUser, getAll, deleteUser, updateAllUser} from "../handlers/user"
+import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "../middleware/index"
 
 const router = Router();
 
@@ -115,7 +115,10 @@ const router = Router();
  *                                                  example: field
  *                                              msg:
  *                                                  type: string 
- *                                                  example: El email esta vacio
+ *                                                  example: El email no está en el formato correcto
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: usuariodeprueba@gmail.
  *                                              path:
  *                                                  type: string
  *                                                  example: email
@@ -153,17 +156,84 @@ const router = Router();
  *                                              
  *         
  */
-router.post("/create",handlePasswordEncrypt,createUser) ;
+const configCreate = {
+    "email": "lowercase",
+    "nombre": "capitalize",
+    "apellido": "capitalize",     
+    "nombre_tipo": "lowercase"
+};
+router.post("/create",
+    body("email")
+        .notEmpty().withMessage("El email esta vacío")
+        .isEmail().withMessage("El email no está en el formato correcto"),
+    body("nombre")
+        .notEmpty().withMessage("El nombre esta vacío")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("apellido")
+        .notEmpty().withMessage("El apellido está vacio")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("contraseña")
+        .notEmpty().withMessage("La contraseña no puede estar vacia"),
+    body("nombre_tipo")
+        .notEmpty().withMessage("El tipo esta vacío")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    handleInputErrors,
+    handlePasswordEncrypt,
+    normalizeFieldsGeneral(configCreate),
+    createUser) ;
+
 router.post("/login",
     body("email")
-        .notEmpty().withMessage("El email no puede estar vacío")
+        .notEmpty().withMessage("El email esta vacío")
         .isEmail().withMessage("El email no está en el formato correcto"),
     body("contraseña")
-        .notEmpty().withMessage("La contraseña esta vacía"),
+        .notEmpty().withMessage("La contraseña está vacía"),
     handleInputErrors,
     loginUser);
 
 router.get("/get-all", getAll);
-router.delete("/delete/:id", deleteUser);
+
+const configUpdate = {
+    "email": "lowercase",
+    "nuevo_email": "lowercase",
+    "nombre": "capitalize",
+    "apellido": "capitalize",     
+    "nombre_tipo": "lowercase"
+};
+
+router.put("/update",
+    body("email")
+        .notEmpty().withMessage("El email esta vacío")
+        .isEmail().withMessage("El email no está en el formato correcto"),
+    body("nuevo_email")
+        .notEmpty().withMessage("El nuevo email esta vacío")
+        .isEmail().withMessage("El nuevo email no está en el formato correcto"),
+    body("nombre")
+        .notEmpty().withMessage("El nombre esta vacío")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("apellido")
+        .notEmpty().withMessage("El apellido está vacio")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    body("contraseña")
+        .notEmpty().withMessage("La contraseña no puede estar vacia"),
+    body("nombre_tipo")
+        .notEmpty().withMessage("El tipo esta vacío")
+        .isString().withMessage("El tipo debe ser una cadena de caracteres"),
+    handleInputErrors,
+    handlePasswordEncrypt,
+    normalizeFieldsGeneral(configUpdate),
+    updateAllUser);
+
+
+const configDelete = {
+    "email": "lowercase",
+};
+router.delete("/delete/:email",
+    param("email")
+        .notEmpty().withMessage("El email está vacio")
+        .isEmail().withMessage("El email no está en el formato correcto"),
+    handleInputErrors,
+    normalizeFieldsGeneral(configDelete),
+    deleteUser);
 
 export default router;
