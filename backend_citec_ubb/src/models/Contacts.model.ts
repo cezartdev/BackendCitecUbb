@@ -21,7 +21,7 @@ class Contacts {
         `;
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (email,nombre,cargo,rut_empresa) VALUES 
-            (fji9okp1qg@mail.com, Maria Garcia , Director de Marketing, 84.976.200-1)
+            ('fji9okp1qg@mail.com', 'Maria Garcia' , 'Director de Marketing',' 84.976.200-1')
          ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 
