@@ -16,13 +16,13 @@ class GiroEmpresa {
                 FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (rut_empresa, codigo_giro)
-            );
+    )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas;
         `;
 
         const insertDataQuery = `
         INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
         ('84.976.200-1', '239200')
-        ON DUPLICATE KEY UPDATE rut = VALUES(rut);
+        ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
     `;
 
         try {
