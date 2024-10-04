@@ -16,7 +16,7 @@ class Contacts {
                 cargo varchar(100) COLLATE latin1_spanish_ci NOT NULL COMMENT 'cargo en la empresa',
                 rut_empresa varchar(200) NOT NULL COMMENT 'Rut de la empresa',
                 FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de contactos de empresas';
         `;
         const insertDataQuery = `
