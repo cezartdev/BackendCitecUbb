@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import BussinessLine from "../models/BussinessLine.model";
+import Contacts from "../models/Contacts.model";
 
 
 export const getAll = async (req: Request, res: Response) => {
 
     try {
-        const response = await BussinessLine.getAll();
+        const response = await Contacts.getAll();
         res.status(200).json({ response });
     } catch (err) {
         res.status(500).json({ errors: err.message });
@@ -13,10 +13,10 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getById = async (req: Request, res: Response) => {
-    const codigo = Number(req.params.codigo);
+    const email = req.params.email;
     try {
-        const response = await BussinessLine.getById(codigo);
-        res.status(200).json({ msg: "Giro seleccionada correctamente", response });
+        const response = await Contacts.getById(email);
+        res.status(200).json({ msg: "contacto seleccionada correctamente", response });
     } catch (err) {
         res.status(500).json({ errors: err.details });
     }

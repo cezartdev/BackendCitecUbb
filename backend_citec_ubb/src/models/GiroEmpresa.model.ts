@@ -1,0 +1,83 @@
+import db from "../config/db"
+import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
+import KeepFormatError from "../utils/KeepFormatErrors";
+
+class GiroEmpresa {
+    static dependencies = ["giros", "empresas"];
+    private static nombreTabla: string = "giros_empresa";
+
+    //Modelo SQL de la clase
+    static async initTable(): Promise<void> {
+        const createTableQuery = `
+            CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
+                rut_empresas VARCHAR(200) PRIMARY KEY NOT NULL,
+                codigo_giros INT PRIMARY KEY NOT NULL,
+                FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),   
+                FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
+
+        const insertDataQuery = `
+        INSERT INTO ${this.nombreTabla} (rut_empresas,codigo_giros) VALUES
+        ('84.976.200-1', 239200)
+        ON DUPLICATE KEY UPDATE rut = VALUES(rut);
+    `;
+
+        try {
+            // Crear la tabla si no existe
+            await db.query(createTableQuery);
+            // Insertar valores por defecto si es necesario
+            await db.query(insertDataQuery);
+
+        } catch (err) {
+            console.error('Error al inicializar la tabla giros_empresa:', err);
+            throw err;
+        }
+    }
+
+    static async getAll(): Promise<RowDataPacket[]> {
+        const querySelect = 'SELECT * FROM giros_empresa';
+
+        try {
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
+
+
+            // Devolvemos
+            return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Obtener por ID
+    static async getById(rut_empresas: string): Promise<RowDataPacket> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
+
+        try {
+            const [GiroEmpresa] = await db.execute<RowDataPacket[]>(querySelect, [rut_empresas]);
+            if (!GiroEmpresa[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Giro empresa no encontrada",
+                        value: `${rut_empresas}`,
+                        path: "id",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+
+
+            return GiroEmpresa[0];
+        } catch (err) {
+            throw err;
+        }
+    }
+
+
+
+}
+
+export default GiroEmpresa;

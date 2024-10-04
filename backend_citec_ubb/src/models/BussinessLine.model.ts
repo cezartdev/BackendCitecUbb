@@ -58,20 +58,27 @@ class BussinessLine {
     }
 
     // Crear
-    static async create(nombre: string): Promise<RowDataPacket> {
+    static async create(codigo: number, nombre: string, nombre_categorias: string): Promise<RowDataPacket> {
         const queryInsert = 'INSERT INTO giros (nombre) VALUES (?)';
         const querySelect = 'SELECT * FROM giros WHERE nombre = ?';
+        const queryCategory = `SELECT * FROM categorias WHERE nombre = ?`
 
         try {
+
+            const [category] = await db.execute<ResultSetHeader>(queryCategory, [nombre_categorias]);
+
+            if (!category[0]) {
+                const errors = [{ type: "field", msg: "Error al crear giro", value: `${nombre_categorias}`, path: "nombre_categorias", location: "body" }]
+                throw new KeepFormatError(errors);
+            }
+
             // Ejecuta la consulta de inserción
-            const [result] = await db.execute<ResultSetHeader>(queryInsert, [nombre]);
+            const [result] = await db.execute<ResultSetHeader>(queryInsert, [codigo, nombre, nombre_categorias]);
 
             console.log(result);
 
-            const insertId = result.insertId;
-
-            // Ejecutamos la consulta para obtener los datos completos del usuario
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [insertId]);
+            // Ejecutamos la consulta para obtener los datos completos del giro
+            const [rows] = await db.execute<RowDataPacket[]>(querySelect, [codigo]);
 
             // Devolvemos
             return rows[0];
@@ -89,6 +96,32 @@ class BussinessLine {
 
             // Devolvemos
             return rows;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Obtener por ID
+    static async getById(codigo: number): Promise<RowDataPacket> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE codigo = ?`;
+
+        try {
+            const [bussinessLine] = await db.execute<RowDataPacket[]>(querySelect, [codigo]);
+            if (!bussinessLine[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Giro no encontrado",
+                        value: `${codigo}`,
+                        path: "codigo",
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors);
+            }
+
+
+            return bussinessLine[0];
         } catch (err) {
             throw err;
         }
