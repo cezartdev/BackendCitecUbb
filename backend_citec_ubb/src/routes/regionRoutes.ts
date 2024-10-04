@@ -7,6 +7,9 @@ const router = Router();
 
 
 router.get("/get-all",getAll);
+
+
+
 router.get("/get-by-id/:id",
     param("id")
         .notEmpty().withMessage("El id no puede estar vacio")
