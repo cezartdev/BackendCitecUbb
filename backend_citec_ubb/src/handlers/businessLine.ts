@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import BussinessLine from "../models/BussinessLine.model";
+import BussinessLine from "../models/BusinessLine.model";
 
 
 export const getAll = async (req: Request, res: Response) => {

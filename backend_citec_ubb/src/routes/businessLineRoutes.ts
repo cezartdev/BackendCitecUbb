@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
 import { handleInputErrors } from "../middleware/index"
-import { getAll, getById } from "../handlers/bussinessLine"
+import { getAll, getById } from "../handlers/businessLine"
 
 
 const router = Router();

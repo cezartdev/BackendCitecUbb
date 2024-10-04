@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import GiroEmpresa from "../models/GiroEmpresa.model";
+import GiroEmpresa from "../models/BusinessLine-Business";
 
 
 export const getAll = async (req: Request, res: Response) => {
