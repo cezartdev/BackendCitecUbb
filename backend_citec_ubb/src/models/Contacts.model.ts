@@ -5,7 +5,7 @@ import KeepFormatError from "../utils/KeepFormatErrors";
 class Contacts {
     //Modelo SQL de la clase
     static dependencies = ["empresas"];
-    private static nombreTabla: string = "regiones";
+    private static nombreTabla: string = "contactos";
 
     static async initTable(): Promise<void> {
 
