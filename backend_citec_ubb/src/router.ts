@@ -1,13 +1,13 @@
 import { Router } from "express"
 import userRoutes from "./routes/userRoutes"
-import bussinessLineRoutes from "./routes/bussinessLineRoutes"
+import bussinessLineRoutes from "./routes/businessLineRoutes"
 import typeRoutes from "./routes/typeRoutes"
 import regionRoutes from "./routes/regionRoutes"
 import provinceRoutes from "./routes/provinceRoutes"
 import communeRoutes from "./routes/communeRoutes"
 import businessRoutes from "./routes/businessRoutes"
 import categoryRoutes from "./routes/categoryRoutes"
-import giroEmpresaRoutes from "./routes/giroEmpresaRoutes"
+import giroEmpresaRoutes from "./routes/businessLine-businessRoutes"
 import contactsRoutes from "./routes/contactsRoutes"
 
 const router = Router();
