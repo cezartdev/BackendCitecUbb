@@ -10,8 +10,8 @@ class GiroEmpresa {
     static async initTable(): Promise<void> {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                rut_empresas VARCHAR(200) PRIMARY KEY NOT NULL,
-                codigo_giros INT PRIMARY KEY NOT NULL,
+                rut_empresa VARCHAR(200) PRIMARY KEY NOT NULL,
+                codigo_giro INT PRIMARY KEY NOT NULL,
                 FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),   
                 FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -19,7 +19,7 @@ class GiroEmpresa {
         `;
 
         const insertDataQuery = `
-        INSERT INTO ${this.nombreTabla} (rut_empresas,codigo_giros) VALUES
+        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
         ('84.976.200-1', 239200)
         ON DUPLICATE KEY UPDATE rut = VALUES(rut);
     `;
