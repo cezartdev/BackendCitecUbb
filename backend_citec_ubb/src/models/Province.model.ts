@@ -96,9 +96,22 @@ class Province {
         const querySelect = `SELECT * FROM ${this.nombreTabla}`;
 
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
+            const [province] = await db.execute<RowDataPacket[]>(querySelect);
 
-            return rows;
+			if (!province[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen provincias",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors,404);
+            }
+
+            return province;
         } catch (err) {
             throw err;
         }
@@ -120,7 +133,7 @@ class Province {
                         location: "params",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors,404);
             }
             return province[0];
         } catch (err) {

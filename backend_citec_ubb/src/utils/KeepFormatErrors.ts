@@ -9,8 +9,9 @@ interface ErrorDetails {
 
 class KeepFormatError extends Error {
   details: ErrorDetails[];
+  code: number;
 
-  constructor(details: ErrorDetails[]) {
+  constructor(details: ErrorDetails[], code: number = 500) {
     // Llama al constructor de la clase Error con el mensaje
     super("Error para mantener el formato");
 
@@ -19,7 +20,7 @@ class KeepFormatError extends Error {
 
     // Asigna los detalles personalizados
     this.details = details;
-
+    this.code = code;
     // Captura el stack trace (rastro del error)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, KeepFormatError);

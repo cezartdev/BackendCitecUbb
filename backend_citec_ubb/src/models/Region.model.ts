@@ -66,7 +66,7 @@ class Region {
                         location: "",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
             return region;
         } catch (err) {
@@ -90,7 +90,7 @@ class Region {
                         location: "params",
                     },
                 ];
-                throw new KeepFormatError(errors);
+                throw new KeepFormatError(errors, 404);
             }
             return region[0];
         } catch (err) {

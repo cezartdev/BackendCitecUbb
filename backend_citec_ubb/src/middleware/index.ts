@@ -16,6 +16,12 @@ export const handlePasswordEncrypt = async (req: Request,res:Response, next: Nex
     
     const saltRounds = 10;
     const { contraseña } = req.body;
+   
+    if(!contraseña){
+        next();
+        return;
+    }
+    
     try {
         // Genera el hash de la contraseña
         const hashedPassword = await bcrypt.hash(contraseña, saltRounds);
@@ -27,27 +33,43 @@ export const handlePasswordEncrypt = async (req: Request,res:Response, next: Nex
         next();
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ response: {msg:"Error encriptando la contraseña" }});
+        return res.status(500).json({ errors: [{msg:"Error encriptando la contraseña" }]});
     }
 }
 
 // Middleware generalizado para normalizar campos según la configuración
-export const normalizeFieldsGeneral = (config) => (req: Request, res:Response, next: NextFunction) => {
-    // Iterar sobre la configuración y aplicar las transformaciones
+export const normalizeFieldsGeneral = (config) => (req: Request, res: Response, next: NextFunction) => {
+    // Función auxiliar para normalizar valores de acuerdo a la configuración
+    const normalizeField = (value: string, transformation: string) => {
+        if (transformation === 'lowercase') {
+            return value.toLowerCase();
+        } else if (transformation === 'uppercase') {
+            return value.toUpperCase();
+        } else if (transformation === 'capitalize') {
+            return value.split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+        }
+        return value; // Si no se encuentra ninguna transformación, devolver el valor original
+    };
+
+    // Iterar sobre la configuración y aplicar las transformaciones en req.body, req.params y req.query
     Object.keys(config).forEach(field => {
+        const transformation = config[field];
+
+        // Normalizar campos en req.body
         if (req.body[field]) {
-            const transformation = config[field];
-            
-            // Aplicar la transformación dependiendo del valor en la configuración
-            if (transformation === 'lowercase') {
-                req.body[field] = req.body[field].toLowerCase();
-            } else if (transformation === 'uppercase') {
-                req.body[field] = req.body[field].toUpperCase();
-            } else if (transformation === 'capitalize') {
-                req.body[field] = req.body[field].split(' ')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                    .join(' ');
-            }
+            req.body[field] = normalizeField(req.body[field], transformation);
+        }
+
+        // Normalizar campos en req.params
+        if (req.params[field]) {
+            req.params[field] = normalizeField(req.params[field], transformation);
+        }
+
+        // Normalizar campos en req.query
+        if (req.query[field]) {
+            req.query[field] = normalizeField(req.query[field] as string, transformation);
         }
     });
 
