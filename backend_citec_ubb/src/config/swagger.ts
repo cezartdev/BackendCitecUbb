@@ -10,9 +10,25 @@ const options: swaggerJSDoc.Options = {
                 description: 'Rutas relacionadas con los Usuarios'
             },
             {
+                name:'Tipos',
+                description: 'Rutas relacionadas con los Tipos'
+            },
+            {
+                name:'Regiones',
+                description: 'Rutas relacionadas con las Regiones'
+            },
+            {
+                name:'Provincias',
+                description: 'Rutas relacionadas con las Provincias'
+            },
+            {
+                name:'Comunas',
+                description: 'Rutas relacionadas con las Comunas'
+            },
+            {
                 name:'Empresas',
                 description: 'Rutas relacionadas con las Empresas'
-            }
+            }, 
         ],
         info:{
             title: '(REST API) Documentacion backend para proyecto Citec UBB',
