@@ -21,7 +21,7 @@ class GiroEmpresa {
 
         const insertDataQuery = `
         INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
-        ('84.976.200-1', 239200)
+        ('84.976.200-1', '239200')
         ON DUPLICATE KEY UPDATE rut = VALUES(rut);
     `;
 
