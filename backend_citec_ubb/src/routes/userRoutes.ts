@@ -500,7 +500,7 @@ router.get("/get-by-id/:email",
  *                              properties:
  *                                  msg:
  *                                      type: string
- *                                      example: "Usuario Actualizado correctamente"
+ *                                      example: Usuario Actualizado correctamente
  *                                  response:
  *                                      type: object
  *                                      properties:
