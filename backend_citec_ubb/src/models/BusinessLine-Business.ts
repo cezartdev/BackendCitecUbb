@@ -10,11 +10,12 @@ class GiroEmpresa {
     static async initTable(): Promise<void> {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                rut_empresa VARCHAR(200) PRIMARY KEY NOT NULL,
-                codigo_giro INT PRIMARY KEY NOT NULL,
+                rut_empresa VARCHAR(200) NOT NULL,
+                codigo_giro INT NOT NULL,
                 FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),   
                 FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (rut_empresa, codigo_giro)
             );
         `;
 
