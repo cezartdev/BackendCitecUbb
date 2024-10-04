@@ -16,7 +16,7 @@ class GiroEmpresa {
                 FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (rut_empresa, codigo_giro)
-    )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas;
+    )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas';
         `;
 
         const insertDataQuery = `
