@@ -535,6 +535,149 @@ router.put("/update",
     updateAllBusiness
 );
 
+/**
+ * @swagger
+ * /api/business/update:
+ *      patch:
+ *          summary: Actualiza a una empresa parcialmente
+ *          tags:
+ *              - Empresas
+ *          description: Esta ruta se encarga de editar o actualizar a las empresas de forma parcial, se pasan solo los atributos que se van a cambiar
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              rut:
+ *                                  type: string
+ *                                  example: 77.123.456-7
+ *                              razon_social:
+ *                                  type: string
+ *                                  example: empresa spa
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Empresa Actualizada correctamente"
+ *                                  response:
+ *                                      type: object
+ *                                      properties:
+ *                                          rut:
+ *                                              type: string
+ *                                              example: 77.123.456-7
+ *                                          razon_social:
+ *                                              type: string
+ *                                              example: Empresa Spa
+ *                                          nombre_de_fantasia:
+ *                                              type: string
+ *                                              example: Construcciones El Pedro
+ *                                          email_factura:
+ *                                              type: string
+ *                                              example: factura@gmail.com
+ *                                          direccion:
+ *                                              type: string
+ *                                              example: calle o'higgins n°12
+ *                                          comuna:
+ *                                              type: number
+ *                                              example: 8103
+ *                                          telefono:
+ *                                              type: string
+ *                                              example: "+56912345678"
+ *                                          created_at:
+ *                                              type: string
+ *                                              example: 2024-10-03T19:36:42.000Z
+*              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: El telefono no está en el formato correcto
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: +56912345678a
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: telefono
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                         
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: La empresa que intenta actualizar no existe
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 77.123.456-9
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: rut
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                        
+ *              409:
+ *                  description: Recurso existente o duplicado (Conflict)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: El nuevo rut le pertenece a otra empresa
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 84.976.200-1
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: nuevo_rut
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                               
+ *                                              
+ *         
+ */
 //PATCH - Actualización parcial de una empresa
 router.patch("/update",
     body("rut")
@@ -571,7 +714,76 @@ router.patch("/update",
     handleInputErrors,
     normalizeFieldsGeneral(configUpdate),
     updatePartialBusiness);
+/**
+ * @swagger
+ * /api/business/get-all:
+ *      get:
+ *          summary: Obtiene a todos las empresas en un arreglo de objetos
+ *          tags:
+ *              - Empresas
+ *          description: Esta ruta se encarga de devolver a las empresas con todas sus propiedades en un arreglo de objetos
 
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Empresas seleccionadas correctamente"
+ *                                  response:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                               rut:
+ *                                                  type: string
+ *                                                  example: 77.123.456-7
+ *                                               razon_social:
+ *                                                  type: string
+ *                                                  example: Empresa Spa
+ *                                               nombre_de_fantasia:
+ *                                                  type: string
+ *                                                  example: Construcciones El Pedro
+ *                                               email_factura:
+ *                                                  type: string
+ *                                                  example: factura@gmail.com
+ *                                               direccion:
+ *                                                  type: string
+ *                                                  example: calle o'higgins n°12
+ *                                               comuna:
+ *                                                  type: number
+ *                                                  example: 8103
+ *                                               telefono:
+ *                                                  type: string
+ *                                                  example: 229123457
+ *                                               created_at:
+ *                                                  type: string
+ *                                                  example: 2024-09-29T22:35:16.000Z                                           
+ *                                              
+ *                                              
+ *                                                  
+ *              500:
+ *                  description: Error interno (Internal Server Error)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No se sabe como manejar la solicitud
+                                        
+ *                                 
+ */
 router.get("/get-all", getAll);
 
 router.get("/get-by-id/:rut",
