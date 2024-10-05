@@ -13,26 +13,34 @@ const phoneRegex = /^(?:\+569\d{8}|[2-9]\d{8})$/;
 *           Empresa:
 *               type: object
 *               properties:
-*                   email:
+*                   rut:
 *                       type: string
-*                       description: Email del usuario
-*                       example: admin@gmail.com
-*                   nombre:
+*                       description: Rut de la empresa
+*                       example: 77.123.456-7
+*                   razon_social:
 *                       type: string
-*                       description: El nombre del usuario
-*                       example: Juan
-*                   apellido:
+*                       description: La razon social de la empresa
+*                       example: Empresa Spa
+*                   nombre_de_fantasia:
 *                       type: string
-*                       description: El apellido del usuario
-*                       example: Perez
-*                   contraseña:
+*                       description: El nombre ficticio de la empresa
+*                       example: Construcciones El Pedro
+*                   email_factura:
 *                       type: string
-*                       description: La contraseña del usuario hasheada
-*                       example: 1@.0//as+K
-*                   nombre_tipo:
+*                       description: Es el email de la empresa
+*                       example: factura@gmail.com
+*                   direccion:
 *                       type: string
-*                       description: El tipo de usuario
-*                       example: gerente
+*                       description: La calle o direccion de la empresa
+*                       example: calle o'higgins n°12
+*                   comuna:
+*                       type: number
+*                       description: El codigo territorial de la comuna
+*                       example: 8103
+*                   telefono:
+*                       type: string
+*                       description: El telefono de la empresa
+*                       example: 229123457
 */
 
 /**
