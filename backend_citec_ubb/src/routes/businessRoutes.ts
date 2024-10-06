@@ -375,8 +375,8 @@ router.delete("/delete/:rut",
  *                                  type: string
  *                                  example: 229123457
  *          responses:
- *              200:
- *                  description: Respuesta correcta (OK)
+ *              201:
+ *                  description: Respuesta correcta (Created)
  *                  content:
  *                      application/json:
  *                          schema:
@@ -786,6 +786,117 @@ router.patch("/update",
  */
 router.get("/get-all", getAll);
 
+
+/**
+ * @swagger
+ * /api/business/get-by-id/{rut}:
+ *      get:
+ *          summary: Obtiene a una empresa segun su rut
+ *          tags:
+ *              - Empresas
+ *          description: Esta ruta se encarga de devolver a una empresa con todas sus propiedades en un objeto
+ *          parameters:
+ *            - in: path
+ *              name: rut
+ *              description: El rut de la empresa
+ *              required: true
+ *              schema:
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Empresa obtenida correctamente"
+ *                                  response:
+ *                                          type: object
+ *                                          properties:
+ *                                               rut:
+ *                                                  type: string
+ *                                                  example: 77.123.456-7
+ *                                               razon_social:
+ *                                                  type: string
+ *                                                  example: Empresa Spa
+ *                                               nombre_de_fantasia:
+ *                                                  type: string
+ *                                                  example: Construcciones El Pedro
+ *                                               email_factura:
+ *                                                  type: string
+ *                                                  example: factura@gmail.com
+ *                                               direccion:
+ *                                                  type: string
+ *                                                  example: calle o'higgins n°12
+ *                                               comuna:
+ *                                                  type: number
+ *                                                  example: 8103
+ *                                               telefono:
+ *                                                  type: string
+ *                                                  example: 229123457
+ *                                               created_at:
+ *                                                  type: string
+ *                                                  example: 2024-09-29T22:35:16.000Z                                           
+ *                                              
+ *              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Formato de rut invalido. Debe ser '11.111.111-1'
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 77.123.456-
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: rut
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                        
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Empresa no encontrada
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 77.123.456-9
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: rut
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                                                              
+ *                                 
+ */
 router.get("/get-by-id/:rut",
     param("rut")
         .notEmpty().withMessage("El rut esta vacio")

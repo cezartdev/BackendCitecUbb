@@ -491,8 +491,8 @@ router.get("/get-by-id/:email",
  *                                  type: string
  *                                  example: usuario
  *          responses:
- *              200:
- *                  description: Respuesta correcta (OK)
+ *              201:
+ *                  description: Respuesta correcta (Created)
  *                  content:
  *                      application/json:
  *                          schema:
