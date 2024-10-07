@@ -83,6 +83,281 @@ class Contacts {
             throw err;
         }
     }
+
+    // Crear
+    static async create(
+        email: string,
+        nombre: string,
+        cargo: string,
+        rut_empresa: string
+    ): Promise<RowDataPacket> {
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (email,nombre,cargo,rut_empresa) VALUES (?, ?, ?, ?)`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
+        const queryBusiness = `SELECT * FROM empresas WHERE rut = ?`;
+        try {
+            //Se comprueba si la empresa existe
+            const [business] = await db.execute<RowDataPacket[]>(queryBusiness, [
+                rut_empresa,
+            ]);
+            if (!business[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Empresa no encontrada",
+                        value: `${business}`,
+                        path: "empresa",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+            //Se comprueba si el contacto ya existe
+            const [queryContacts] = await db.execute<RowDataPacket[]>(querySelect, [
+                email,
+            ]);
+            if (queryContacts[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El contacto que intentas crear ya existe",
+                        value: `${email}`,
+                        path: "email",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+            }
+            // Ejecuta la consulta de inserción
+            await db.execute<ResultSetHeader>(queryInsert, [
+                email,
+                nombre,
+                cargo,
+                rut_empresa,
+            ]);
+
+            const [contact] = await db.execute<RowDataPacket[]>(querySelect, [email]);
+
+            // Devolvemos el contaco creado
+            return contact[0]; // Como es solo un contacto, devolvemos el primer (y único) elemento
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Actualizar completamente un contacto PUT
+    static async update(
+        email: string,
+        nuevo_email: string,
+        nombre: string,
+        cargo: string,
+        rut_empresa: string
+    ): Promise<RowDataPacket> {
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET email = ?, nombre = ?, cargo = ?, rut_empresa = ? WHERE email = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
+        const queryBusiness = `SELECT * FROM empresas WHERE rut = ?`;
+        try {
+            // Se comprueba si el contacto ya existe
+            const [existingContact] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [email]
+            );
+            if (!existingContact[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El usuario que intenta actualizar no existe",
+                        value: email,
+                        path: "email",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            //Se comprueba si la empresa existe
+            const [business] = await db.execute<RowDataPacket[]>(queryBusiness, [
+                rut_empresa,
+            ]);
+            if (!business[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Empresa no encontrada",
+                        value: `${rut_empresa}`,
+                        path: "rut_empresa",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            // Se comprueba si el nuevo_email pertenece a otro contacto
+            const [existingOtherContact] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [nuevo_email]
+            );
+
+
+            if (existingOtherContact[0] && email !== nuevo_email) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El nuevo rut pertenece a otra empresa",
+                        value: nuevo_email,
+                        path: "nuevo_email",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+
+            }
+
+            // Ejecutar la consulta de actualización completa
+            await db.execute<ResultSetHeader>(queryUpdate, [
+                nuevo_email,
+                nombre,
+                cargo,
+                rut_empresa,
+            ]);
+
+            // Retornar al contacto actualizada
+            const [updatedContact] = await db.execute<RowDataPacket[]>(querySelect, [
+                nuevo_email,
+            ]);
+
+            return updatedContact[0];
+        } catch (err) {
+
+            throw err;
+        }
+    }
+
+    // Actualizar parcialmente un contacto PATCH
+    static async partialUpdate(
+        email: string,
+        fieldsToUpdate: Partial<{ nuevo_email: string, nombre: string; cargo: string; rut_empresa: string; }>
+    ): Promise<RowDataPacket> {
+        let queryUpdate = `UPDATE ${this.nombreTabla} SET `;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
+        const queryBusiness = `SELECT * FROM empresas WHERE rut = ?`;
+
+        const fields = [];
+        const values = [];
+
+        // Construimos dinámicamente la consulta solo con los campos proporcionados
+        for (const [key, value] of Object.entries(fieldsToUpdate)) {
+            if (key === "nuevo_email" && value !== undefined && value !== null) {
+                fields.push(`email = ?`);
+                values.push(value);
+                continue
+            }
+            if (value !== undefined && value !== null) {
+                fields.push(`${key} = ?`);
+                values.push(value);
+            }
+        }
+
+        // Si no hay campos para actualizar, lanzamos un error
+        if (fields.length === 0) {
+            const errors = [{ type: "field", msg: "No hay campos para actualizar", value: email, path: "email", location: "body" }];
+            throw new KeepFormatError(errors, 400);
+        }
+
+        queryUpdate += fields.join(", ") + ` WHERE email = ?`;
+        values.push(email);
+
+
+        try {
+            // Se comprueba si el contacto ya existe
+            const [existingContact] = await db.execute<RowDataPacket[]>(querySelect, [email]);
+            if (!existingContact[0]) {
+                const errors = [{ type: "field", msg: "El contacto que intenta actualizar no existe", value: email, path: "email", location: "body" }];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            const newEmailContact = Object.entries(fieldsToUpdate)[0][1];
+            if (newEmailContact) {
+                const [existingOtherContact] = await db.execute<RowDataPacket[]>(
+                    querySelect,
+                    [newEmailContact]
+                );
+
+                if (existingOtherContact[0] && email !== newEmailContact) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "El nuevo email le pertenece a otro contacto",
+                            value: newEmailContact,
+                            path: "nuevo_email",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 409);
+
+                }
+            }
+
+            //Si se pasa por parametro empresa se verifica que exista
+            const newBusiness = Object.entries(fieldsToUpdate)[5][1];
+            if (newBusiness) {
+                const [business] = await db.execute<RowDataPacket[]>(queryBusiness, [newBusiness]);
+                if (!business[0]) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "Empresa no encontrada",
+                            value: `${newBusiness}`,
+                            path: "empresa",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 404);
+                }
+
+            }
+
+            // Ejecutar la consulta de actualización parcial
+            await db.execute<ResultSetHeader>(queryUpdate, values);
+            // Si existe un email nuevo se cambia
+            const newEmail = Object.entries(fieldsToUpdate)[0][1];
+            let queryEmail = email;
+            if (newEmail) {
+                queryEmail = newEmail;
+            }
+            // Retornar al contacto actualizado
+            const [updatedContact] = await db.execute<RowDataPacket[]>(querySelect, [queryEmail]);
+            return updatedContact[0];
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Eliminar
+    static async delete(email: string): Promise<RowDataPacket> {
+        const queryDelete = `DELETE FROM ${this.nombreTabla} WHERE email = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE email = ?`;
+        try {
+            const [contact] = await db.execute<RowDataPacket[]>(querySelect, [email]);
+            if (!contact[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El usuario que intenta eliminar no existe",
+                        value: `${email}`,
+                        path: `email`,
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            await db.execute<ResultSetHeader>(queryDelete, [email]);
+
+            return contact[0];
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 export default Contacts;

@@ -23,6 +23,6 @@ router.use("/commune", communeRoutes);
 router.use("/business", businessRoutes);
 router.use("/category", categoryRoutes);
 router.use("/business-giro", giroEmpresaRoutes);
-typeRoutes.use("/contacts", contactsRoutes)
+router.use("/contacts", contactsRoutes)
 
 export default router;
