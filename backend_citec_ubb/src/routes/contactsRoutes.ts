@@ -84,7 +84,7 @@ const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
  *                                          rut_empresa:
  *                                              type: string
  *                                              example: 77.123.456-7
- *               400:
+ *              400:
  *                  description: Petición mal hecha (Bad Request)
  *                  content:
  *                      application/json:
@@ -402,7 +402,7 @@ router.get("/get-by-id/:email",
  *                                              path:
  *                                                  type: string
  *                                                  example: email
- *  *                                           location:
+ *                                              location:
  *                                                  type: string
  *                                                  example: body
  *  

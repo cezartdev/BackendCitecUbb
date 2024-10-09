@@ -36,49 +36,7 @@ class GiroEmpresa {
             throw err;
         }
     }
-
-    static async getAll(): Promise<RowDataPacket[]> {
-        const querySelect = 'SELECT * FROM giros_empresa';
-
-        try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
-
-
-            // Devolvemos
-            return rows;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    // Obtener por ID
-    static async getById(rut_empresas: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
-
-        try {
-            const [GiroEmpresa] = await db.execute<RowDataPacket[]>(querySelect, [rut_empresas]);
-            if (!GiroEmpresa[0]) {
-                const errors = [
-                    {
-                        type: "field",
-                        msg: "Giro empresa no encontrada",
-                        value: `${rut_empresas}`,
-                        path: "id",
-                        location: "params",
-                    },
-                ];
-                throw new KeepFormatError(errors);
-            }
-
-
-            return GiroEmpresa[0];
-        } catch (err) {
-            throw err;
-        }
-    }
-
-
-
+    
 }
 
 export default GiroEmpresa;
