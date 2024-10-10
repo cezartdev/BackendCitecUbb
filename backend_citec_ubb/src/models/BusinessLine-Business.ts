@@ -19,24 +19,24 @@ class GiroEmpresa {
     )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas';
         `;
 
-        const insertDataQuery = `
-        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
-        ('84.976.200-1', '239200')
-        ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
-    `;
+        //        const insertDataQuery = `
+        //        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
+        //     ('84.976.200-1', '239200')
+        //       ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
+        //   `;
 
         try {
             // Crear la tabla si no existe
             await db.query(createTableQuery);
             // Insertar valores por defecto si es necesario
-            await db.query(insertDataQuery);
+            //         await db.query(insertDataQuery);
 
         } catch (err) {
             console.error('Error al inicializar la tabla giros_empresa:', err);
             throw err;
         }
     }
-    
+
 }
 
 export default GiroEmpresa;
