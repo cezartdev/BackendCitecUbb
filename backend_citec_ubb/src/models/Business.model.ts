@@ -108,11 +108,20 @@ class Business {
     // Obtener todos
     static async getAll(): Promise<RowDataPacket[]> {
         const querySelect = `SELECT * FROM ${this.nombreTabla}`;
-
+        const queryBusinessLine = `SELECT giros_empresa.codigo_giro,giros.nombre FROM ${this.nombreTabla} INNER JOIN giros_empresa ON giros_empresa.rut_empresa = ${this.nombreTabla}.rut INNER JOIN giros ON codigo_giro = giros.codigo WHERE rut = ?`
         try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
+            const [business] = await db.execute<RowDataPacket[]>(querySelect);
 
-            return rows;
+
+            for (const value of business) {
+                const [businessLine] = await db.execute<RowDataPacket[]>(queryBusinessLine, [value.rut]);
+
+                // Añadir el resultado de businessLine a cada objeto
+                value.giros = businessLine;
+            }
+
+
+            return business;
         } catch (err) {
             throw err;
         }
@@ -121,10 +130,10 @@ class Business {
     // Obtener por ID
     static async getById(rut: string): Promise<RowDataPacket> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
-
+        const queryBusinessLine = `SELECT giros_empresa.codigo_giro,giros.nombre FROM ${this.nombreTabla} INNER JOIN giros_empresa ON giros_empresa.rut_empresa = ${this.nombreTabla}.rut INNER JOIN giros ON codigo_giro = giros.codigo WHERE rut = ?`
         try {
-            const [business] = await db.execute<RowDataPacket[]>(querySelect,[rut]);
-			if (!business[0]) {
+            const [business] = await db.execute<RowDataPacket[]>(querySelect, [rut]);
+            if (!business[0]) {
                 const errors = [
                     {
                         type: "field",
@@ -136,7 +145,10 @@ class Business {
                 ];
                 throw new KeepFormatError(errors, 404);
             }
-
+            //Giros
+            const [businessLine] = await db.execute<RowDataPacket[]>(queryBusinessLine, [rut]);
+            //Se añaden giros
+            business[0].giros = businessLine
             return business[0];
         } catch (err) {
             throw err;
@@ -242,18 +254,18 @@ class Business {
     // Actualizar parcialmente una empresa PATCH
     static async partialUpdate(
         rut: string,
-        fieldsToUpdate: Partial<{nuevo_rut: string, razon_social: string; nombre_de_fantasia: string; email_factura: string; direccion: string; comuna: string; telefono: string; }>
+        fieldsToUpdate: Partial<{ nuevo_rut: string, razon_social: string; nombre_de_fantasia: string; email_factura: string; direccion: string; comuna: string; telefono: string; }>
     ): Promise<RowDataPacket> {
         let queryUpdate = `UPDATE ${this.nombreTabla} SET `;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
         const queryCommune = `SELECT * FROM comunas WHERE id = ?`;
-        
+
         const fields = [];
         const values = [];
 
         // Construimos dinámicamente la consulta solo con los campos proporcionados
         for (const [key, value] of Object.entries(fieldsToUpdate)) {
-            if(key === "nuevo_rut" && value !== undefined && value !== null){
+            if (key === "nuevo_rut" && value !== undefined && value !== null) {
                 fields.push(`rut = ?`);
                 values.push(value);
                 continue
@@ -281,14 +293,14 @@ class Business {
                 const errors = [{ type: "field", msg: "La empresa que intenta actualizar no existe", value: rut, path: "rut", location: "body" }];
                 throw new KeepFormatError(errors, 404);
             }
-            
+
             const newRutBusiness = Object.entries(fieldsToUpdate)[0][1];
-            if(newRutBusiness){
+            if (newRutBusiness) {
                 const [existingOtherBusiness] = await db.execute<RowDataPacket[]>(
                     querySelect,
                     [newRutBusiness]
                 );
-    
+
                 if (existingOtherBusiness[0] && rut !== newRutBusiness) {
                     const errors = [
                         {
@@ -300,13 +312,13 @@ class Business {
                         },
                     ];
                     throw new KeepFormatError(errors, 409);
-    
+
                 }
             }
 
             //Si se pasa por parametro comuna se verifica que exista
             const newCommune = Object.entries(fieldsToUpdate)[5][1];
-            if(newCommune){
+            if (newCommune) {
                 const [commune] = await db.execute<RowDataPacket[]>(queryCommune, [newCommune]);
                 if (!commune[0]) {
                     const errors = [
@@ -328,7 +340,7 @@ class Business {
             // Si existe un rut nuevo se cambia
             const newRut = Object.entries(fieldsToUpdate)[0][1];
             let queryRut = rut;
-            if(newRut){
+            if (newRut) {
                 queryRut = newRut;
             }
             // Retornar la empresa actualizada
