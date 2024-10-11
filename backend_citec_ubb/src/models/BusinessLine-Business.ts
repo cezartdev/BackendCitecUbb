@@ -19,65 +19,23 @@ class GiroEmpresa {
     )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas';
         `;
 
-        const insertDataQuery = `
-        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
-        ('84.976.200-1', '239200')
-        ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
-    `;
+        //        const insertDataQuery = `
+        //        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
+        //     ('84.976.200-1', '239200')
+        //       ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
+        //   `;
 
         try {
             // Crear la tabla si no existe
             await db.query(createTableQuery);
             // Insertar valores por defecto si es necesario
-            await db.query(insertDataQuery);
+            //         await db.query(insertDataQuery);
 
         } catch (err) {
             console.error('Error al inicializar la tabla giros_empresa:', err);
             throw err;
         }
     }
-
-    static async getAll(): Promise<RowDataPacket[]> {
-        const querySelect = 'SELECT * FROM giros_empresa';
-
-        try {
-            const [rows] = await db.execute<RowDataPacket[]>(querySelect);
-
-
-            // Devolvemos
-            return rows;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    // Obtener por ID
-    static async getById(rut_empresas: string): Promise<RowDataPacket> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE id = ?`;
-
-        try {
-            const [GiroEmpresa] = await db.execute<RowDataPacket[]>(querySelect, [rut_empresas]);
-            if (!GiroEmpresa[0]) {
-                const errors = [
-                    {
-                        type: "field",
-                        msg: "Giro empresa no encontrada",
-                        value: `${rut_empresas}`,
-                        path: "id",
-                        location: "params",
-                    },
-                ];
-                throw new KeepFormatError(errors);
-            }
-
-
-            return GiroEmpresa[0];
-        } catch (err) {
-            throw err;
-        }
-    }
-
-
 
 }
 
