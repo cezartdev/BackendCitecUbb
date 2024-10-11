@@ -109,15 +109,17 @@ class Business {
     static async getAll(): Promise<RowDataPacket[]> {
         const querySelect = `SELECT * FROM ${this.nombreTabla}`;
         const queryBusinessLine = `SELECT giros_empresa.codigo_giro,giros.nombre FROM ${this.nombreTabla} INNER JOIN giros_empresa ON giros_empresa.rut_empresa = ${this.nombreTabla}.rut INNER JOIN giros ON codigo_giro = giros.codigo WHERE rut = ?`
+        const queryCommune = `SELECT comunas.id,comunas.nombre FROM ${this.nombreTabla} JOIN comunas ON ${this.nombreTabla}.comuna = comunas.id WHERE rut = ?`
         try {
             const [business] = await db.execute<RowDataPacket[]>(querySelect);
 
 
             for (const value of business) {
                 const [businessLine] = await db.execute<RowDataPacket[]>(queryBusinessLine, [value.rut]);
-
+                const [businessCommune] = await db.execute<RowDataPacket[]>(queryCommune, [value.rut]);
                 // Añadir el resultado de businessLine a cada objeto
                 value.giros = businessLine;
+                value.comuna = businessCommune[0];
             }
 
 
@@ -131,6 +133,7 @@ class Business {
     static async getById(rut: string): Promise<RowDataPacket> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE rut = ?`;
         const queryBusinessLine = `SELECT giros_empresa.codigo_giro,giros.nombre FROM ${this.nombreTabla} INNER JOIN giros_empresa ON giros_empresa.rut_empresa = ${this.nombreTabla}.rut INNER JOIN giros ON codigo_giro = giros.codigo WHERE rut = ?`
+        const queryCommune = `SELECT comunas.id,comunas.nombre FROM ${this.nombreTabla} JOIN comunas ON ${this.nombreTabla}.comuna = comunas.id WHERE rut = ?`
         try {
             const [business] = await db.execute<RowDataPacket[]>(querySelect, [rut]);
             if (!business[0]) {
@@ -149,6 +152,11 @@ class Business {
             const [businessLine] = await db.execute<RowDataPacket[]>(queryBusinessLine, [rut]);
             //Se añaden giros
             business[0].giros = businessLine
+            //Esto hace que comuna se cambie por businessCommune[0]
+            //Se añaden codigo y nombre de comuna
+            const [businessCommune] = await db.execute<RowDataPacket[]>(queryCommune, [rut]);
+            business[0].comuna = businessCommune[0]
+
             return business[0];
         } catch (err) {
             throw err;
