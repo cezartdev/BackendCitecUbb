@@ -12,24 +12,25 @@ class GiroEmpresa {
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 rut_empresa VARCHAR(200) NOT NULL,
                 codigo_giro INT NOT NULL,
-                FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),   
-                FOREIGN KEY (codigo_giro) REFERENCES giros(codigo),             
+                FOREIGN KEY (rut_empresa) REFERENCES empresas(rut) ON DELETE CASCADE ON UPDATE CASCADE,   
+                FOREIGN KEY (codigo_giro) REFERENCES giros(codigo) ON DELETE CASCADE,             
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (rut_empresa, codigo_giro)
     )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de giros de empresas';
         `;
 
-        //        const insertDataQuery = `
-        //        INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
-        //     ('84.976.200-1', '239200')
-        //       ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
-        //   `;
+        const insertDataQuery = `
+            INSERT INTO ${this.nombreTabla} (rut_empresa,codigo_giro) VALUES
+            ('77.123.456-7', '11101'),
+            ('77.123.456-7', '11109')
+            ON DUPLICATE KEY UPDATE rut_empresa = VALUES(rut_empresa);
+          `;
 
         try {
             // Crear la tabla si no existe
             await db.query(createTableQuery);
             // Insertar valores por defecto si es necesario
-            //         await db.query(insertDataQuery);
+            await db.query(insertDataQuery);
 
         } catch (err) {
             console.error('Error al inicializar la tabla giros_empresa:', err);

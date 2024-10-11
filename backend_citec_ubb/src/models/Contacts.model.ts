@@ -15,13 +15,14 @@ class Contacts {
                 nombre varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre extenso',
                 cargo varchar(100) COLLATE latin1_spanish_ci NOT NULL COMMENT 'cargo en la empresa',
                 rut_empresa varchar(200) NOT NULL COMMENT 'Rut de la empresa',
-                FOREIGN KEY (rut_empresa) REFERENCES empresas(rut),
+                FOREIGN KEY (rut_empresa) REFERENCES empresas(rut) ON DELETE CASCADE ON UPDATE CASCADE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de contactos de empresas';
         `;
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (email,nombre,cargo,rut_empresa) VALUES 
-            ('fji9okp1qg@mail.com', 'Maria Garcia' , 'Director de Marketing','84.976.200-1')
+            ('fji9okp1qg@mail.com', 'Maria Garcia' , 'Director de Marketing','84.976.200-1'),
+            ('correo@mail.com', 'Juan Perez' , 'Gerente','84.976.200-1')
          ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 

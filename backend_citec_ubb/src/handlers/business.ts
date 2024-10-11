@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import Business from "../models/Business.model";
 
 export const createBusiness = async (req: Request, res: Response) => {
-    const { rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
+    const { rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros} = req.body;
     try {
-        const response = await Business.create(rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono);
+        const response = await Business.create(rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros);
         res.status(201).json({ msg: "Empresa creada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;
@@ -46,9 +46,9 @@ export const deleteBusiness = async (req: Request, res: Response) => {
 
 export const updateAllBusiness = async (req: Request, res: Response) => {
 
-    const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
+    const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros } = req.body;
     try {
-        const response = await Business.update(rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono);
+        const response = await Business.update(rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros);
         res.status(201).json({ msg: "Empresa Actualizada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;
@@ -58,9 +58,9 @@ export const updateAllBusiness = async (req: Request, res: Response) => {
 
 export const updatePartialBusiness = async (req: Request, res: Response) => {
 
-    const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono } = req.body;
+    const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros } = req.body;
     try {
-        const response = await Business.partialUpdate(rut, { nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono });
+        const response = await Business.partialUpdate(rut, { nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros });
         res.status(200).json({ msg: "Empresa Actualizada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;

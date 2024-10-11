@@ -6,6 +6,9 @@ import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "
 const router = Router();
 const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
 const phoneRegex = /^(?:\+569\d{8}|[2-9]\d{8})$/;
+const capitalizeWords = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+};
 /**
 * @swagger
 * components:
@@ -210,6 +213,22 @@ router.post("/create",
     body("telefono")
         .notEmpty().withMessage("El telefono está vacío")
         .matches(phoneRegex).withMessage("El telefono no está en el formato correcto"),
+    body("contactos").isArray({ min: 1 }).withMessage("Debe incluir al menos un contacto"),
+        body("contactos.*.email")
+            .notEmpty().withMessage("El email de contacto está vacío")
+            .isEmail().withMessage("El email del contacto no está en el formato correcto")
+            .toLowerCase(),
+        body("contactos.*.nombre")
+            .notEmpty().withMessage("El nombre del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
+            .customSanitizer(value => capitalizeWords(value)),
+        body("contactos.*.cargo")
+            .notEmpty().withMessage("El cargo del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el cargo del contacto")
+            .customSanitizer(value => capitalizeWords(value)),
+    body("giros").isArray({ min: 1 }).withMessage("Debe incluir al menos un giro"),
+        body("giros.*.codigo")
+            .notEmpty().withMessage("El codigo de un giro está vacío"),
     handleInputErrors,
     normalizeFieldsGeneral(configCreate),
     createBusiness);
@@ -530,6 +549,22 @@ router.put("/update",
     body("telefono")
         .notEmpty().withMessage("El telefono está vacío")
         .matches(phoneRegex).withMessage("El telefono no está en el formato correcto"),
+    body("contactos").isArray({ min: 1 }).withMessage("Debe incluir al menos un contacto"),
+        body("contactos.*.email")
+            .notEmpty().withMessage("El email de contacto está vacío")
+            .isEmail().withMessage("El email del contacto no está en el formato correcto")
+            .toLowerCase(),
+        body("contactos.*.nombre")
+            .notEmpty().withMessage("El nombre del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
+            .customSanitizer(value => capitalizeWords(value)),
+        body("contactos.*.cargo")
+            .notEmpty().withMessage("El cargo del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el cargo del contacto")
+            .customSanitizer(value => capitalizeWords(value)),
+    body("giros").isArray({ min: 1 }).withMessage("Debe incluir al menos un giro"),
+        body("giros.*.codigo")
+            .notEmpty().withMessage("El codigo de un giro está vacío"),
     handleInputErrors,
     normalizeFieldsGeneral(configUpdate),
     updateAllBusiness
