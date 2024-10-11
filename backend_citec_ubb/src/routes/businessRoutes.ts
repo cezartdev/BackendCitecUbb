@@ -19,7 +19,7 @@ const capitalizeWords = (str: string) => {
 *                   rut:
 *                       type: string
 *                       description: Rut de la empresa
-*                       example: 77.123.456-7
+*                       example: 77.123.456-9
 *                   razon_social:
 *                       type: string
 *                       description: La razon social de la empresa
@@ -37,13 +37,43 @@ const capitalizeWords = (str: string) => {
 *                       description: La calle o direccion de la empresa
 *                       example: calle o'higgins n°12
 *                   comuna:
-*                       type: number
-*                       description: El codigo territorial de la comuna
-*                       example: 8103
+*                       type: object
+*                       properties:
+*                           id:
+*                               type: number
+*                               example: 8103
+*                           nombre:
+*                               type: string
+*                               example: Chiguayante             
 *                   telefono:
 *                       type: string
 *                       description: El telefono de la empresa
 *                       example: 229123457
+*                   giros:
+*                       type: array
+*                       items:
+*                           type: object
+*                           properties:
+*                               codigo_giro:
+*                                   type: number
+*                                   example: 11101
+*                               nombre:
+*                                   type: string
+*                                   example: "CULTIVO DE TRIGO"
+*                   contactos:
+*                       type: array
+*                       items:
+*                           type: object
+*                           properties:
+*                               email:
+*                                   type: string
+*                                   example: correo1283@gmail.com
+*                               nombre:
+*                                   type: string
+*                                   example: "Juan Perez"  
+*                               cargo:
+*                                   type: string
+*                                   example: "Gerente" 
 */
 
 /**
@@ -82,6 +112,31 @@ const capitalizeWords = (str: string) => {
  *                              telefono:
  *                                  type: string
  *                                  example: +56912345678
+ *                              giros:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          codigo_giro:
+ *                                              type: number
+ *                                              example: 11101
+ *                                          nombre:
+ *                                              type: string
+ *                                              example: "CULTIVO DE TRIGO"
+ *                              contactos:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          email:
+ *                                              type: string
+ *                                              example: correo1283@gmail.com
+ *                                          nombre:
+ *                                              type: string
+ *                                              example: "Juan Perez"  
+ *                                          cargo:
+ *                                              type: string
+ *                                              example: "Gerente"  
  *                              
  *          responses:
  *              201:
@@ -118,6 +173,31 @@ const capitalizeWords = (str: string) => {
  *                                          telefono:
  *                                              type: string
  *                                              example: +56912345678
+ *                                          giros:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      codigo_giro:
+ *                                                          type: number
+ *                                                          example: 11101
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "CULTIVO DE TRIGO"
+ *                                          contactos:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      email:
+ *                                                          type: string
+ *                                                          example: correo1283@gmail.com
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "Juan Perez"  
+ *                                                      cargo:
+ *                                                          type: string
+ *                                                          example: "Gerente"   
  *                                          created_at:
  *                                              type: string
  *                                              example: 2024-10-03T19:36:42.000Z

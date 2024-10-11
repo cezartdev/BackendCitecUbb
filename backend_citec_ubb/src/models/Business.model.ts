@@ -386,7 +386,6 @@ static async partialUpdate(
                 throw new KeepFormatError(errors, 404);
             }
         }
-        console.log(newRut)
         // Ejecutar la consulta de actualización parcial de la empresa
         if (fields.length > 0) {
             await db.execute<ResultSetHeader>(queryUpdate, values);
