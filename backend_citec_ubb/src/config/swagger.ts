@@ -33,6 +33,10 @@ const options: swaggerJSDoc.Options = {
                 name: 'Contactos',
                 description: 'Rutas relacionadas con los Contactos'
             },
+            {
+                name: 'Giros',
+                description: 'Rutas relacionadas con los Giros'
+            },
         ],
         info: {
             title: '(REST API) Documentacion backend para proyecto Citec UBB',
