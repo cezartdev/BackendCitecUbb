@@ -947,15 +947,45 @@ router.get("/get-all", getAll);
  *                                                  type: string
  *                                                  example: calle o'higgins n°12
  *                                               comuna:
- *                                                  type: number
- *                                                  example: 8103
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      id:
+ *                                                          type: number
+ *                                                          example: 8103
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: Chiguayante
  *                                               telefono:
  *                                                  type: string
  *                                                  example: 229123457
  *                                               created_at:
  *                                                  type: string
- *                                                  example: 2024-09-29T22:35:16.000Z                                           
- *                                              
+ *                                                  example: 2024-09-29T22:35:16.000Z
+ *                                               giros:
+ *                                                  type: array
+ *                                                  items:
+ *                                                      type: object
+ *                                                      properties:
+ *                                                          codigo_giro:
+ *                                                              type: number
+ *                                                              example: 11101
+ *                                                          nombre:
+ *                                                              type: string
+ *                                                              example: CULTIVO DE TRIGO
+ *                                               contactos:
+ *                                                  type: array
+ *                                                  items:
+ *                                                      type: object
+ *                                                      properties:
+ *                                                          email:
+ *                                                              type: string
+ *                                                              example: correo123@gmail.com
+ *                                                          nombre:
+ *                                                              type: string
+ *                                                              example: Juan Perez
+ *                                                          cargo:
+ *                                                              type: string
+ *                                                              example: Gerente
  *              400:
  *                  description: Peticion mal hecha (Bad Request)
  *                  content:
