@@ -120,9 +120,6 @@ const capitalizeWords = (str: string) => {
  *                                          codigo_giro:
  *                                              type: number
  *                                              example: 11101
- *                                          nombre:
- *                                              type: string
- *                                              example: "CULTIVO DE TRIGO"
  *                              contactos:
  *                                  type: array
  *                                  items:
