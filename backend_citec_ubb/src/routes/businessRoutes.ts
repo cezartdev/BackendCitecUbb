@@ -165,8 +165,14 @@ const capitalizeWords = (str: string) => {
  *                                              type: string
  *                                              example: calle o'higgins n°12
  *                                          comuna:
- *                                              type: number
- *                                              example: 8103
+ *                                              type: object
+ *                                              properties:
+ *                                                  id:
+ *                                                      type: number
+ *                                                      example: 8103
+ *                                                  nombre:
+ *                                                      type: string
+ *                                                      example: Chiguayante
  *                                          telefono:
  *                                              type: string
  *                                              example: +56912345678
@@ -313,7 +319,7 @@ router.post("/create",
 
 /**
  * @swagger
- * /api/user/delete/{rut}:
+ * /api/business/delete/{rut}:
  *      delete:
  *          summary: Elimina a una empresa
  *          tags:
@@ -356,11 +362,42 @@ router.post("/create",
  *                                              type: string
  *                                              example: calle o'higgins n°12
  *                                          comuna:
- *                                              type: number
- *                                              example: 8103
+ *                                              type: object
+ *                                              properties:
+ *                                                  id:
+ *                                                      type: number
+ *                                                      example: 8103
+ *                                                  nombre:
+ *                                                      type: string
+ *                                                      example: Chiguayante
  *                                          telefono:
  *                                              type: string
- *                                              example: +56912345678                                              
+ *                                              example: +56912345678
+ *                                          giros:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      codigo_giro:
+ *                                                          type: number
+ *                                                          example: 11101
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "CULTIVO DE TRIGO"
+ *                                          contactos:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      email:
+ *                                                          type: string
+ *                                                          example: correo1283@gmail.com
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "Juan Perez"  
+ *                                                      cargo:
+ *                                                          type: string
+ *                                                          example: "Gerente"                                                
  *                                          created_at:
  *                                              type: string
  *                                              example: 2024-10-03T19:36:42.000Z
