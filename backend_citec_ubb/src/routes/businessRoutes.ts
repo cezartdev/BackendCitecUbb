@@ -107,18 +107,18 @@ const capitalizeWords = (str: string) => {
  *                                  type: string
  *                                  example: calle o'higgins n°12
  *                              comuna:
- *                                  type: string
- *                                  example: 8103
+ *                                 type: string
+ *                                 example: 8103
  *                              telefono:
  *                                  type: string
- *                                  example: +56912345678
+ *                                  example: "+56912345678"
  *                              giros:
  *                                  type: array
  *                                  items:
  *                                      type: object
  *                                      properties:
- *                                          codigo_giro:
- *                                              type: number
+ *                                          codigo:
+ *                                              type: string
  *                                              example: 11101
  *                              contactos:
  *                                  type: array
