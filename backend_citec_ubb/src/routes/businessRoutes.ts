@@ -507,6 +507,30 @@ router.delete("/delete/:rut",
  *                              telefono:
  *                                  type: string
  *                                  example: 229123457
+ *                              contactos:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          email:
+ *                                              type: string
+ *                                              example: correo1236@gmail.com
+ *                                          nombre:
+ *                                              type: string 
+ *                                              example: Juan Perez
+ *                                          cargo:
+ *                                              type: string
+ *                                              example: Gerente
+ *                              giros:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          codigo:
+ *                                              type: string
+ *                                              example: 11101                                    
+ *                                  
+ *                                  
  *          responses:
  *              201:
  *                  description: Respuesta correcta (Created)
@@ -537,8 +561,39 @@ router.delete("/delete/:rut",
  *                                              type: string
  *                                              example: calle o'higgins n°12
  *                                          comuna:
- *                                              type: number
- *                                              example: 8103
+ *                                              type: object
+ *                                              properties:
+ *                                                  id:
+ *                                                      type: number
+ *                                                      example: 8103
+ *                                                  nombre:
+ *                                                      type: string
+ *                                                      example: Chiguayante
+ *                                          giros:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      codigo_giro:
+ *                                                          type: number
+ *                                                          example: 11101
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "CULTIVO DE TRIGO"
+ *                                          contactos:
+ *                                              type: array
+ *                                              items:
+ *                                                  type: object
+ *                                                  properties:
+ *                                                      email:
+ *                                                          type: string
+ *                                                          example: correo1283@gmail.com
+ *                                                      nombre:
+ *                                                          type: string
+ *                                                          example: "Juan Perez"  
+ *                                                      cargo:
+ *                                                          type: string
+ *                                                          example: "Gerente" 
  *                                          telefono:
  *                                              type: string
  *                                              example: "+56912345678"

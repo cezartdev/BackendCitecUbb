@@ -99,7 +99,7 @@ class Business {
                     element => String(element.codigo) === String(value.codigo)
                 );
             
-                console.log(value.codigo)
+          
                 if (!businessLinesExists) {
                     const errors = [
                         {
@@ -276,7 +276,7 @@ class Business {
         const queryInsertContact = `INSERT INTO contactos (email,nombre,cargo,rut_empresa) VALUES (?,?,?,?)`;
         const queryDeleteBusinessLine = `DELETE FROM giros_empresa WHERE rut_empresa = ?`;
         const queryInsertBusinessLineBusiness = `INSERT INTO giros_empresa (rut_empresa, codigo_giro) VALUES (?,?)`;
-
+        const querySelectContacts = `SELECT * FROM contactos`;
         try {
             // Se comprueba si la empresa ya existe
             const [existingBusiness] = await db.execute<RowDataPacket[]>(
@@ -331,6 +331,28 @@ class Business {
                 throw new KeepFormatError(errors, 409);
             }
 
+            //TODO: Realizar inserciones despues de validar todo
+            const [contacts] = await db.execute<RowDataPacket[]>(querySelectContacts);
+
+            for (const value of contactos) {
+                const contactsExists = contacts.some(
+                    (contact) => contact.email === value.email
+                );
+
+                if (contactsExists) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "El contacto que intenta asignar ya existe en otra empresa",
+                            value: `${value.email}`,
+                            path: "contactos",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 409);
+                }
+            }
+
             // Actualizar la información de la empresa
             await db.execute<ResultSetHeader>(queryUpdate, [
                 nuevo_rut,
@@ -342,10 +364,10 @@ class Business {
                 telefono,
                 rut,
             ]);
-
+            
             // Eliminar los contactos antiguos
-            await db.execute<ResultSetHeader>(queryDeleteContacts, [rut]);
-
+            await db.execute<ResultSetHeader>(queryDeleteContacts, [nuevo_rut]);
+            
             // Insertar los nuevos contactos
             for (const value of contactos) {
                 await db.execute<ResultSetHeader>(queryInsertContact, [
@@ -355,12 +377,13 @@ class Business {
                     nuevo_rut,
                 ]);
             }
-
             // Eliminar los giros antiguos
-            await db.execute<ResultSetHeader>(queryDeleteBusinessLine, [rut]);
-
+            await db.execute<ResultSetHeader>(queryDeleteBusinessLine, [nuevo_rut]);
+            
+            console.log("aqui")
             // Insertar los nuevos giros
             for (const value of giros) {
+                console.log(value.codigo)
                 await db.execute<ResultSetHeader>(queryInsertBusinessLineBusiness, [
                     nuevo_rut,
                     value.codigo,
