@@ -29,7 +29,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/bussiness-line/get-all:
+ * /api/business-line/get-all:
  *      get:
  *          summary: Obtiene todos los giros en un arreglo de objetos
  *          tags:
@@ -84,7 +84,7 @@ router.get("/get-all", getAll);
 
 /**
  * @swagger
- * /api/bussiness-line/get-by-id/{id}:
+ * /api/business-line/get-by-id/{id}:
  *      get:
  *          summary: Obtiene a un giro segun su codigo
  *          tags:
