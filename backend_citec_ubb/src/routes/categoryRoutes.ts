@@ -20,7 +20,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/categoria/get-all:
+ * /api/category/get-all:
  *      get:
  *          summary: Obtiene todas las categorías en un arreglo de objetos
  *          tags:
