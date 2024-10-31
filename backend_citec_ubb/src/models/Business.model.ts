@@ -379,10 +379,10 @@ class Business {
             // Eliminar los giros antiguos
             await db.execute<ResultSetHeader>(queryDeleteBusinessLine, [nuevo_rut]);
             
-            console.log("aqui")
+            
             // Insertar los nuevos giros
             for (const value of giros) {
-                console.log(value.codigo)
+                
                 await db.execute<ResultSetHeader>(queryInsertBusinessLineBusiness, [
                     nuevo_rut,
                     value.codigo,
