@@ -5,7 +5,7 @@ import {handleInputErrors, handlePasswordEncrypt, normalizeFieldsGeneral} from "
 
 const router = Router();
 const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
-const phoneRegex = /^(?:\+569\d{8}|[2-9]\d{8})$/;
+const phoneRegex = /^(?:\+569\d{8}|[0-9]\d{8})$/;
 const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
 };
