@@ -333,10 +333,9 @@ class Business {
 
             //TODO: Realizar inserciones despues de validar todo
             const [contacts] = await db.execute<RowDataPacket[]>(querySelectContacts);
-
             for (const value of contactos) {
                 const contactsExists = contacts.some(
-                    (contact) => contact.email === value.email
+                    (contact) => contact.email === value.email && contact.rut_empresa !== rut
                 );
 
                 if (contactsExists) {
