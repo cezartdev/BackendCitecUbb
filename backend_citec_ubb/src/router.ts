@@ -8,6 +8,7 @@ import communeRoutes from "./routes/communeRoutes"
 import businessRoutes from "./routes/businessRoutes"
 import categoryRoutes from "./routes/categoryRoutes"
 import contactsRoutes from "./routes/contactsRoutes"
+import servicesRoutes from "./routes/servicesRoutes"
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/commune", communeRoutes);
 router.use("/business", businessRoutes);
 router.use("/category", categoryRoutes);
 router.use("/contacts", contactsRoutes);
+router.use("/services", servicesRoutes)
 
 export default router;
