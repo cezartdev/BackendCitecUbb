@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
-
+import {createService, getById, getAll} from "../handlers/services"
 
 
 
@@ -125,7 +125,7 @@ const router = Router();
  *                                              
  *         
  */
-router.post("/create", );
+router.post("/create", createService);
 
 
 /**
@@ -409,7 +409,7 @@ router.put("/update", );
  *                                                  example: No se sabe como manejar la solicitud                              
  *                                 
  */
-router.get("/get-all", );
+router.get("/get-all", getAll );
 
 
 /**
@@ -500,6 +500,6 @@ router.get("/get-all", );
  *                                                  example: params                                                                              
  *                                 
  */
-router.get("/get-by-id/:nombre",);
+router.get("/get-by-id/:nombre", getById);
 
 export default router;
