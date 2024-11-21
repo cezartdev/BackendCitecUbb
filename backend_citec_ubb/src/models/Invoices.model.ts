@@ -10,9 +10,9 @@ class Invoices {
        
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
-                numero_folio INT NOT NULL COMMENT 'numero de la factura',
+                numero_folio INT NOT NULL AUTO_INCREMENT COMMENT 'numero de la factura',
                 pago_neto DECIMAL(11,2) NOT NULL COMMENT 'pago sin iva',
-                iva DECIMAL(11,2) COMMENT 'iva de la cotización',
+                iva DECIMAL(11,2) DEFAULT 0 COMMENT 'iva de la cotización',
                 fecha DATE NOT NULL,
                 rut_emisor VARCHAR(200) NOT NULL,
                 rut_receptor VARCHAR(200) NOT NULL,

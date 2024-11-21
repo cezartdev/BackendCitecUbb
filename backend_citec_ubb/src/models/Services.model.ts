@@ -36,33 +36,7 @@ class Services {
     }
 
 
-
-    // // Obtener por ID
-    // static async getById(url: string): Promise<RowDataPacket> {
-    //     const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE url = ?`;
-        
-    //     try {
-
-    //         const [keyArray] = await db.execute<RowDataPacket[]>(querySelect, [url]);
-    //         if (!keyArray[0]) {
-    //             const errors = [
-    //                 {
-    //                     type: "field",
-    //                     msg: "Acceso denegado: API_KEY inválida",
-    //                     value: `${url}`,
-    //                     path: "clave",
-    //                     location: "params",
-    //                 },
-    //             ];
-    //             throw new KeepFormatError(errors, 403);
-    //         }
-
-    //         return keyArray[0];
-            
-    //     } catch (err) {
-    //         throw err;
-    //     }
-    // }
+    
 
 }
 
