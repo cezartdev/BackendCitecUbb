@@ -33,16 +33,16 @@ export const getById = async (req: Request, res: Response) => {
     }
 };
 
-// export const deleteBusiness = async (req: Request, res: Response) => {
-//     const rut = req.params.rut;
-//     try {
-//         const response = await Services.delete(rut);
-//         res.status(200).json({ msg: "Empresa eliminada correctamente", response });
-//     } catch (err) {
-//         const errorCode = err.code || 500;
-//         res.status(errorCode).json({ errors: err.details });
-//     }
-// };
+export const deleteService = async (req: Request, res: Response) => {
+    const nombre = req.params.nombre;
+    try {
+        const response = await Services.delete(nombre);
+        res.status(200).json({ msg: "Servicio eliminado correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};
 
 // export const updateAllBusiness = async (req: Request, res: Response) => {
 

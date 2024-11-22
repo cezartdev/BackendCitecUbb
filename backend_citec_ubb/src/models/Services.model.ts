@@ -1,9 +1,10 @@
 import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import KeepFormatError from "../utils/KeepFormatErrors";
+import { Console } from "console";
 class Services {
     //Modelo SQL de la clase
-    static dependencies = [];
+    static dependencies = ["estados"];
     private static nombreTabla: string = "servicios";
 
     static async initTable(): Promise<void> {
@@ -13,6 +14,8 @@ class Services {
                 nombre VARCHAR(200) NOT NULL COMMENT 'nombre del servicio',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                estado VARCHAR(20) NOT NULL DEFAULT 'activo',
+                FOREIGN KEY (estado) REFERENCES estados(nombre),
                 PRIMARY KEY (nombre)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de claves';
         `;
@@ -43,12 +46,17 @@ class Services {
         try {
             //Se comprueba si el servicio existe
             const [service] = await db.execute<RowDataPacket[]>(querySelect, [nombre]);
+            
+
             if (service[0]) {
+                const { estado } = service[0];
                 const errors = [
                     {
                         type: "field",
-                        msg: "El servicio que intenta crear ya existe",
-                        value: `${nombre}`,
+                        msg: estado === "eliminado" 
+                            ? "El servicio está marcado como 'eliminado'. Revierta esta acción para volver a manipularlo." 
+                            : "El servicio que intenta crear ya existe",
+                        value: nombre,
                         path: "nombre",
                         location: "body",
                     },
@@ -56,8 +64,10 @@ class Services {
                 throw new KeepFormatError(errors, 409);
             }
             
+            
+            
             await db.execute<ResultSetHeader>(queryInsert, [nombre]);
-
+            
             const serviceResult = await this.getById(nombre);
 
             return serviceResult;
@@ -114,7 +124,51 @@ class Services {
                 throw new KeepFormatError(errors, 404);
             }
 
+            console.log(service)
+
             return service;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+
+    static async delete(nombre: string): Promise<RowDataPacket> {
+        const queryDelete = `UPDATE ${this.nombreTabla} SET estado = 'eliminado' WHERE nombre = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE nombre = ?`;
+        try {
+            const [services] = await db.execute<RowDataPacket[]>(querySelect, [nombre]);
+            if (!services[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El servicio que intenta eliminar no existe",
+                        value: `${nombre}`,
+                        path: `nombre`,
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            if (services[0].estado === 'eliminado') {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El servicio que intenta eliminar ya ha sido eliminado",
+                        value: `${nombre}`,
+                        path: `nombre`,
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+            }
+
+
+            await db.execute<ResultSetHeader>(queryDelete, [nombre]);
+            
+            const result = await this.getById(nombre);
+            return result;
         } catch (err) {
             throw err;
         }

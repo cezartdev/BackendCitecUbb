@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
-import {createService, getById, getAll} from "../handlers/services"
+import {createService, getById, getAll, deleteService} from "../handlers/services"
 
 
 
@@ -221,7 +221,7 @@ router.post("/create", createService);
  *                                                  type: string
  *                                                  example: params                                               
  */
-router.delete("/delete/:nombre",);
+router.delete("/delete/:nombre", deleteService);
 
 
 /**
