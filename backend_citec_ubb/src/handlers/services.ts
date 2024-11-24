@@ -15,7 +15,17 @@ export const createService = async (req: Request, res: Response) => {
 export const getAll = async (req: Request, res: Response) => {
     try {
         const response = await Services.getAll();
-        res.status(200).json({ msg: "Servicios seleccionados correctamente", response });
+        res.status(200).json({ msg: "Servicios activos seleccionados correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};
+
+export const getAllDeleted = async (req: Request, res: Response) => {
+    try {
+        const response = await Services.getAllDeleted();
+        res.status(200).json({ msg: "Servicios eliminados seleccionados correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;
         res.status(errorCode).json({ errors: err.details });
@@ -44,14 +54,14 @@ export const deleteService = async (req: Request, res: Response) => {
     }
 };
 
-// export const updateAllBusiness = async (req: Request, res: Response) => {
+export const updateAllService = async (req: Request, res: Response) => {
 
-//     const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros } = req.body;
-//     try {
-//         const response = await Services.update(rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros);
-//         res.status(201).json({ msg: "Empresa Actualizada correctamente", response });
-//     } catch (err) {
-//         const errorCode = err.code || 500;
-//         res.status(errorCode).json({ errors: err.details });
-//     }
-// };
+    const { nombre, nuevo_nombre } = req.body;
+    try {
+        const response = await Services.update(nombre, nuevo_nombre);
+        res.status(201).json({ msg: "Servicio Actualizado correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};

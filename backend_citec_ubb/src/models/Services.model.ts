@@ -90,7 +90,7 @@ class Services {
                         type: "field",
                         msg: "Servicio no encontrado",
                         value: `${nombre}`,
-                        path: "rut",
+                        path: "nombre",
                         location: "params",
                     },
                 ];
@@ -106,7 +106,7 @@ class Services {
 
     // Obtener todos
     static async getAll(): Promise<RowDataPacket[]> {
-        const querySelect = `SELECT * FROM ${this.nombreTabla}`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado ='activo'`;
 
         try {
             const [service] = await db.execute<RowDataPacket[]>(querySelect);
@@ -124,9 +124,98 @@ class Services {
                 throw new KeepFormatError(errors, 404);
             }
 
-            console.log(service)
 
             return service;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Obtener todos
+    static async getAllDeleted(): Promise<RowDataPacket[]> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado = 'eliminado' `;
+
+        try {
+            const [service] = await db.execute<RowDataPacket[]>(querySelect);
+
+            if (!service[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen servicios",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+
+            return service;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    static async update(
+        nombre: string,
+        nuevo_nombre: string
+    ): Promise<RowDataPacket> {
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET nombre = ? WHERE nombre = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE nombre = ?`;
+        try {
+            
+            const [existingService] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [nombre]
+            );
+            if (!existingService[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El servicio que intenta actualizar no existe",
+                        value: nombre,
+                        path: "nombre",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            // Se comprueba si el nuevo_nombre pertenece a otro servicio
+            const [existingOtherService] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [nuevo_nombre]
+            );
+
+            if (existingOtherService[0] && nombre !== nuevo_nombre) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "El nuevo rut pertenece a otra empresa",
+                        value: nuevo_nombre,
+                        path: "nuevo_nombre",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+            }
+
+         
+
+            // Actualizar la información de la empresa
+            await db.execute<ResultSetHeader>(queryUpdate, [
+                nuevo_nombre,
+                nombre
+            ]);
+            
+        
+          
+
+            // Retornar la empresa actualizada
+            const businessResult = await this.getById(nuevo_nombre);
+            return businessResult;
         } catch (err) {
             throw err;
         }

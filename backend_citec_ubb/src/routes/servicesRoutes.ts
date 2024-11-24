@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
-import {createService, getById, getAll, deleteService} from "../handlers/services"
+import {createService, getById, getAll, deleteService, getAllDeleted, updateAllService} from "../handlers/services"
 
 
 
@@ -20,6 +20,18 @@ const router = Router();
 *                       type: string
 *                       description: Nombre del servicio
 *                       example: "Revision de calidad de ventanas"
+*                   created_at:
+*                       type: string 
+*                       description: "Fecha de creacion" 
+*                       example: "2024-11-24T23:33:02.000Z"
+*                   updated_at:
+*                       type: string 
+*                       description: "Fecha de actualizacion" 
+*                       example: "2024-11-24T23:33:02.000Z"
+*                   estado:
+*                       type: string
+*                       description: "Estado de el servicio"
+*                       example: "activo"  
 */
 
 
@@ -224,6 +236,7 @@ router.post("/create", createService);
 router.delete("/delete/:nombre", deleteService);
 
 
+
 /**
  * @swagger
  * /api/services/update:
@@ -352,7 +365,7 @@ router.delete("/delete/:nombre", deleteService);
  *                                              
  *         
  */
-router.put("/update", );
+router.put("/update", updateAllService );
 
 
 /**
@@ -389,9 +402,37 @@ router.put("/update", );
  *                                               updated_at:
  *                                                  type: string
  *                                                  example: 2024-09-29T22:35:16.000Z                                             
+ *                                               estado:
+ *                                                  type: string
+ *                                                  example: "activo"                                             
  *                                              
- *                                              
- *                                                  
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No existen servicios
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: ""                                                   
  *              500:
  *                  description: Error interno (Internal Server Error)
  *                  content:
@@ -411,6 +452,90 @@ router.put("/update", );
  */
 router.get("/get-all", getAll );
 
+/**
+ * @swagger
+ * /api/services/get-all-deleted:
+ *      get:
+ *          summary: Obtiene a todos los servicios eliminados en un arreglo de objetos
+ *          tags:
+ *              - Servicios
+ *          description: Esta ruta se encarga de devolver a los servicios eliminados con todas sus propiedades en un arreglo de objetos
+
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Servicios eliminados seleccionados correctamente"
+ *                                  response:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                               nombre:
+ *                                                  type: string
+ *                                                  example: "Construccion de muros"
+ *                                               created_at:
+ *                                                  type: string
+ *                                                  example: 2024-09-29T22:35:16.000Z
+ *                                               updated_at:
+ *                                                  type: string
+ *                                                  example: 2024-09-29T22:35:16.000Z
+ *                                               estado:
+ *                                                  type: string
+ *                                                  example: eliminado                                             
+ *                                              
+ *                                              
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No existen servicios
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: ""                                                  
+ *              500:
+ *                  description: Error interno (Internal Server Error)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No se sabe como manejar la solicitud                              
+ *                                 
+ */
+router.get("/get-all-deleted", getAllDeleted);
 
 /**
  * @swagger
