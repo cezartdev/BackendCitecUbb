@@ -1,11 +1,12 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
-import {handleInputErrors} from "../middleware/index"
+import {handleInputErrors, capitalizeWords} from "../middleware/index"
 import {createService, getById, getAll, deleteService, getAllDeleted, updateAllService} from "../handlers/services"
 
 
 
 const router = Router();
+
 
 
 
@@ -137,7 +138,13 @@ const router = Router();
  *                                              
  *         
  */
-router.post("/create", createService);
+router.post("/create",
+    body("nombre")
+        .notEmpty().withMessage("El nombre esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el nombre")
+        .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    createService);
 
 
 /**
@@ -233,7 +240,13 @@ router.post("/create", createService);
  *                                                  type: string
  *                                                  example: params                                               
  */
-router.delete("/delete/:nombre", deleteService);
+router.delete("/delete/:nombre",
+    param("nombre")
+        .notEmpty().withMessage("El nombre esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el nombre")
+        .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    deleteService);
 
 
 
@@ -365,7 +378,17 @@ router.delete("/delete/:nombre", deleteService);
  *                                              
  *         
  */
-router.put("/update", updateAllService );
+router.put("/update",
+    body("nombre")
+        .notEmpty().withMessage("El nombre esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el nombre")
+        .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    body("nuevo_nombre")
+        .notEmpty().withMessage("El nuevo nombre esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el nuevo nombre")
+        .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    updateAllService );
 
 
 /**
@@ -625,6 +648,12 @@ router.get("/get-all-deleted", getAllDeleted);
  *                                                  example: params                                                                              
  *                                 
  */
-router.get("/get-by-id/:nombre", getById);
+router.get("/get-by-id/:nombre",
+    body("nombre")
+        .notEmpty().withMessage("El nombre esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el nombre")
+        .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    getById);
 
 export default router;
