@@ -3,8 +3,8 @@ import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import KeepFormatError from "../utils/KeepFormatErrors";
 class InvoicesServices {
     //Modelo SQL de la clase
-    static dependencies = ["servicios", "cotizaciones"];
-    private static nombreTabla: string = "cotizaciones_servicios";
+    static dependencies = ["servicios", "facturas"];
+    private static nombreTabla: string = "facturas_servicios";
 
     static async initTable(): Promise<void> {
        
@@ -14,7 +14,7 @@ class InvoicesServices {
                 nombre VARCHAR(200) NOT NULL COMMENT 'nombre del servicio',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (numero_folio) REFERENCES cotizaciones(numero_folio),
+                FOREIGN KEY (numero_folio) REFERENCES facturas(numero_folio),
                 FOREIGN KEY (nombre) REFERENCES servicios(nombre),
                 PRIMARY KEY (numero_folio, nombre)
 
@@ -41,32 +41,6 @@ class InvoicesServices {
 
 
 
-    // // Obtener por ID
-    // static async getById(url: string): Promise<RowDataPacket> {
-    //     const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE url = ?`;
-        
-    //     try {
-
-    //         const [keyArray] = await db.execute<RowDataPacket[]>(querySelect, [url]);
-    //         if (!keyArray[0]) {
-    //             const errors = [
-    //                 {
-    //                     type: "field",
-    //                     msg: "Acceso denegado: API_KEY inválida",
-    //                     value: `${url}`,
-    //                     path: "clave",
-    //                     location: "params",
-    //                 },
-    //             ];
-    //             throw new KeepFormatError(errors, 403);
-    //         }
-
-    //         return keyArray[0];
-            
-    //     } catch (err) {
-    //         throw err;
-    //     }
-    // }
 
 }
 

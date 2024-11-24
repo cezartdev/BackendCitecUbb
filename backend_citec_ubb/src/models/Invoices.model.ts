@@ -4,7 +4,7 @@ import KeepFormatError from "../utils/KeepFormatErrors";
 class Invoices {
     //Modelo SQL de la clase
     static dependencies = ["empresas", "servicios", "giros"];
-    private static nombreTabla: string = "cotizaciones";
+    private static nombreTabla: string = "facturas";
 
     static async initTable(): Promise<void> {
        
@@ -28,7 +28,6 @@ class Invoices {
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lista de cotizaciones';
         `;
 
-        
         // const insertDataQuery = `
         //     INSERT INTO ${this.nombreTabla} (url, clave) VALUES 
         //         ('','')
@@ -45,35 +44,6 @@ class Invoices {
             throw err;
         }
     }
-
-
-
-    // Obtener por ID
-    // static async getById(url: string): Promise<RowDataPacket> {
-    //     const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE url = ?`;
-        
-    //     try {
-
-    //         const [keyArray] = await db.execute<RowDataPacket[]>(querySelect, [url]);
-    //         if (!keyArray[0]) {
-    //             const errors = [
-    //                 {
-    //                     type: "field",
-    //                     msg: "Acceso denegado: API_KEY inválida",
-    //                     value: `${url}`,
-    //                     path: "clave",
-    //                     location: "params",
-    //                 },
-    //             ];
-    //             throw new KeepFormatError(errors, 403);
-    //         }
-
-    //         return keyArray[0];
-            
-    //     } catch (err) {
-    //         throw err;
-    //     }
-    // }
 
 }
 

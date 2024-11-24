@@ -12,7 +12,7 @@ const router = Router();
 * @swagger
 * components:
 *       schemas:
-*           Cotizaciones:
+*           Facturas:
 *               type: object
 *               properties:
 *                   numero_folio:
@@ -47,6 +47,18 @@ const router = Router();
 *                       type: number
 *                       description: "Es la url en donde se guardan los archivos"
 *                       example: "./carpeta/archivo.pdf"
+*                   estado:
+*                       type: string
+*                       description: "Estado de eliminado o activo"
+*                       example: "activo"
+*                   servicios:
+*                       type: array
+*                       items:
+*                           type: object
+*                           properties:
+*                               nombre:
+*                                   type: string
+*                                   example: "Construcciones"
 */
 
 
@@ -55,16 +67,16 @@ const router = Router();
  * @swagger
  * /api/invoices/create:
  *      post:
- *          summary: Crear una cotizacion
+ *          summary: Crear una factura
  *          tags:
- *              - Cotizaciones
- *          description: Esta ruta se encarga de crear a una cotizacion
+ *              - Facturas
+ *          description: Esta ruta se encarga de crear a una factura
  *          requestBody:
  *              required: true
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/Cotizaciones'
+ *                          $ref: '#/components/schemas/Facturas'
  *                              
  *          responses:
  *              201:
@@ -76,19 +88,10 @@ const router = Router();
  *                              properties:
  *                                  msg:
  *                                      type: string
- *                                      example: Servicio creado correctamente
+ *                                      example: Factura creada correctamente
  *                                  response:
- *                                      type: object
- *                                      properties:
- *                                          nombre:
- *                                              type: string
- *                                              example: "Revision de calidad de muros"  
- *                                          created_at:
- *                                              type: string
- *                                              example: 2024-10-03T19:36:42.000Z
- *                                          updated_at:
- *                                              type: string
- *                                              example: 2024-10-03T19:36:42.000Z
+ *                                      $ref: '#/components/schemas/Facturas'
+ *                                          
  *                                          
  *              400:
  *                  description: Peticion mal hecha (Bad Request)
@@ -118,33 +121,6 @@ const router = Router();
  *                                                  type: string
  *                                                  example: body                                          
  *                              
- *              409:
- *                  description: Recurso existente o duplicado (Conflict)
- *                  content:
- *                      application/json:
- *                          schema:
- *                              type: object
- *                              properties:
- *                                  errors:
- *                                      type: array
- *                                      items:
- *                                          type: object
- *                                          properties:
- *                                              type:
- *                                                  type: string
- *                                                  example: field
- *                                              msg:
- *                                                  type: string 
- *                                                  example: El servicio que intenta crear ya existe
- *                                              value:
- *                                                  type: string
- *                                                  example: "Revision de calidad de muros"
- *                                              path:
- *                                                  type: string
- *                                                  example: nombre
- *                                              location:
- *                                                  type: string
- *                                                  example: body
  *                                              
  *         
  */
