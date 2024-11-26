@@ -9,6 +9,7 @@ import businessRoutes from "./routes/businessRoutes"
 import categoryRoutes from "./routes/categoryRoutes"
 import contactsRoutes from "./routes/contactsRoutes"
 import servicesRoutes from "./routes/servicesRoutes"
+import invoicesRoutes from "./routes/invoicesRoutes"
 
 const router = Router();
 
@@ -23,6 +24,7 @@ router.use("/commune", communeRoutes);
 router.use("/business", businessRoutes);
 router.use("/category", categoryRoutes);
 router.use("/contacts", contactsRoutes);
-router.use("/services", servicesRoutes)
+router.use("/services", servicesRoutes);
+router.use("/invoices", invoicesRoutes);
 
 export default router;

@@ -1,6 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
+import { createInvoice } from "../handlers/invoices";
 
 
 
@@ -110,21 +111,48 @@ const router = Router();
  *                                                  example: field
  *                                              msg:
  *                                                  type: string 
- *                                                  example: El nombre no esta en formato
+ *                                                  example: El rut no esta en formato
  *                                              value:
  *                                                  type: string
  *                                                  example: +..asda
  *                                              path:
  *                                                  type: string
- *                                                  example: nombre
+ *                                                  example: rut_emisor
  *                                              location:
  *                                                  type: string
- *                                                  example: body                                          
+ *                                                  example: body
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: La factura que intenta actualizar no existe
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 2
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                           
  *                              
  *                                              
  *         
  */
-router.post("/create", );
+router.post("/create", createInvoice);
 
 
 
