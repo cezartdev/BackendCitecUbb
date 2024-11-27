@@ -12,6 +12,7 @@ class InvoicesServices {
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 numero_folio INT NOT NULL COMMENT 'numero de la factura',
                 nombre VARCHAR(200) NOT NULL COMMENT 'nombre del servicio',
+                precio_neto DECIMAL (11,2) NOT NULL COMMENT 'precio del servicio',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (numero_folio) REFERENCES facturas(numero_folio),

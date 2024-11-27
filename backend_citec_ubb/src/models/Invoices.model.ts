@@ -58,10 +58,10 @@ class Invoices {
         iva: number,
         rut_receptor: string,
         codigo_giro: string,
-        servicios: Array<{ nombre: string }>,
-        usuario: string
+        usuario: string,
+        precio_por_servicio: Array<{ precio_neto: number, nombre: string }>
     ): Promise<RowDataPacket> {
-        const queryInsert = `INSERT INTO ${this.nombreTabla} (pago_neto, iva, rut_emisor, rut_receptor, codigo_giro, imagen, usuario) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (pago_neto, iva, emisor, rut_receptor, codigo_giro, imagen, usuario) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const queryEmisorReceptor = `SELECT * FROM empresas WHERE rut = ?`
         const queryGiros = `SELECT * FROM giros WHERE codigo = ?`
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`
@@ -117,9 +117,12 @@ class Invoices {
                 throw new KeepFormatError(errors, 404);
             }
 
+            //verificar si el pago_neto es la suma de los servicios
+
+            let suma = 0;
             const servicioSet = new Set<string>();
             // Validar servicios
-            for (const servicio of servicios) {
+            for (const servicio of precio_por_servicio) {
                 // Validar duplicados en la lista
                 if (servicioSet.has(servicio.nombre)) {
                     const errors = [
@@ -127,7 +130,7 @@ class Invoices {
                             type: "field",
                             msg: "Servicio duplicado en la lista",
                             value: `${servicio.nombre}`,
-                            path: "servicios",
+                            path: "precio_por_servicio",
                             location: "body",
                         },
                     ];
@@ -142,12 +145,27 @@ class Invoices {
                             type: "field",
                             msg: "Servicio no encontrado",
                             value: `${servicio.nombre}`,
-                            path: "servicios",
+                            path: "precio_por_servicio",
                             location: "body",
                         },
                     ];
                     throw new KeepFormatError(errors, 404);
                 }
+
+                suma += servicio.precio_neto
+            }
+
+            if (suma !== pago_neto) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No coincide el precio de los servicios con el pago neto total",
+                        value: `${pago_neto}`,
+                        path: "precio_por_servicio",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
             }
 
             const [usuarios] = await db.execute<RowDataPacket[]>(queryUsuario, [
@@ -166,6 +184,8 @@ class Invoices {
                 throw new KeepFormatError(errors, 404);
             }
 
+
+
             const rut_emisor = "Rut Citec"
             // Ejecuta la consulta de inserción
             const [result] = await db.execute<ResultSetHeader>(queryInsert, [
@@ -178,69 +198,82 @@ class Invoices {
                 usuario          // 7
             ]);
 
+
+
             const nombreGiro = codigoGiro[0].nombre;
             // Obtener el ID generado automáticamente
             const numeroFolio = result.insertId;
 
-            // Define la ruta relativa del archivo PDF
             const relativePdfPath = path.posix.join("pdf", `factura_${numeroFolio}.pdf`);
-
-            // Define la ruta absoluta para crear el archivo
             const absolutePdfPath = path.join(__dirname, "..", "../", relativePdfPath);
             const doc = new PDFDocument({ margin: 50 });
             const fecha = new Date().toISOString().split("T")[0];
             const total = pago_neto + iva;
+
             doc.pipe(fs.createWriteStream(absolutePdfPath));
 
-            // Agregar logotipo
+            // Agregar logotipo (si lo tienes)
             // doc.image("ruta/del/logotipo.png", 50, 50, { width: 100 });
 
             // Título de la factura
-            doc.fontSize(20).text("Factura Electrónica", { align: "center" });
+            doc.fontSize(24).font('Helvetica-Bold').text("Factura Electrónica", { align: "center" });
             doc.moveDown(1);
 
-            // Información de la factura
-            doc.fontSize(12)
-                .text(`Número de Folio: ${numeroFolio}`, { align: "left" })
-                .text(`Fecha: ${fecha}`, { align: "left" })
-                .text(`Emisor: ${rut_emisor}`, { align: "left" })
-                .text(`RUT Receptor: ${rut_receptor}`, { align: "left" })
-                .text(`Giro: ${nombreGiro}`, { align: "left" })
-                .text(`Pago Neto: $${pago_neto.toFixed(2)}`, { align: "left" })
-                .text(`IVA: $${iva.toFixed(2)}`, { align: "left" })
-                .text(`Total: $${total.toFixed(2)}`, { align: "left" });
-
+            // Sección del número de folio (en esquina superior derecha, negrita)
+            doc.fontSize(16).font('Helvetica-Bold').text(`Folio N°${numeroFolio}`, { align: "right" });
             doc.moveDown(1);
-            doc.text("Servicios:", { align: "left" });
+
+            // Información de la factura (con un diseño más limpio)
+            doc.fontSize(12).font('Helvetica').text(`Fecha: ${fecha}`, { align: "left" });
+            doc.text(`Emisor: ${rut_emisor}`, { align: "left" });
+            doc.text(`RUT Receptor: ${rut_receptor}`, { align: "left" });
+            doc.text(`Giro: ${nombreGiro}`, { align: "left" });
+            doc.moveDown(1);
+
+            // Línea divisoria
+            doc.lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.moveDown(1);
+
+            // Agregar la sección de Neto, IVA y Total
+            doc.fontSize(12).font('Helvetica-Bold').text("Totales:", { align: "left" });
+            doc.fontSize(12).font('Helvetica').text(`Pago Neto: $${pago_neto.toFixed(2)}`, { align: "left" });
+            doc.text(`IVA (19%): $${iva.toFixed(2)}`, { align: "left" });
+            doc.text(`Total: $${total.toFixed(2)}`, { align: "left" });
+            doc.moveDown(1);
+
+            // Línea divisoria
+            doc.lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.moveDown(1);
+
+            // Título de la sección de Servicios
+            doc.fontSize(14).font('Helvetica-Bold').text("Servicios", { align: "left" });
             doc.moveDown(0.5);
 
-            // Crear una tabla de servicios
+            // Crear tabla de servicios
             const tableTop = doc.y;
-            const tablePadding = 10;
-            const rowHeight = 20;
             const columnWidths = [50, 300, 100];
 
-            doc.fontSize(10);
+            doc.fontSize(10).font('Helvetica');
             doc.text("No.", 50, tableTop);
             doc.text("Servicio", 100, tableTop);
             doc.text("Precio", 350, tableTop);
-
             doc.moveDown(0.5);
 
-            servicios.forEach((servicio, index) => {
+            // Servicios
+            precio_por_servicio.forEach((servicio, index) => {
                 doc.text(index + 1, 50, doc.y);
                 doc.text(servicio.nombre, 100, doc.y);
-                doc.text(`$${(pago_neto / servicios.length).toFixed(2)}`, 350, doc.y);
+                doc.text(`$${(servicio.precio_neto).toFixed(2)}`, 350, doc.y);
                 doc.moveDown(1);
             });
 
-            // Línea divisoria
+            // Línea divisoria al final
             doc.moveDown(1);
-            doc.lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.moveDown(1);
 
-            // Detalles finales
-            doc.moveDown(1);
-            doc.text("Gracias por su compra. Si tiene alguna consulta, no dude en contactarnos.", { align: "center" });
+            // Pie de página (si deseas agregar alguna información adicional)
+            doc.fontSize(10).font('Helvetica-Oblique').text("Gracias por su compra. Si tiene alguna consulta, no dude en contactarnos.", { align: "center" });
 
             doc.end();
 
@@ -248,9 +281,9 @@ class Invoices {
             const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
             await db.execute<ResultSetHeader>(queryUpdate, [relativePdfPath, numeroFolio]);
 
-            const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre) VALUES (?,?)`;
-            for (const servicio of servicios) {
-                await db.execute<ResultSetHeader>(queryInsertService, [numeroFolio, servicio.nombre]);
+            const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre, precio_neto) VALUES (?,?,?)`;
+            for (const servicio of precio_por_servicio) {
+                await db.execute<ResultSetHeader>(queryInsertService, [numeroFolio, servicio.nombre, servicio.precio_neto]);
             }
 
             const invoiceResult = await this.getById(String(numeroFolio));
@@ -265,7 +298,7 @@ class Invoices {
     // Obtener por ID
     static async getById(numero_folio: string): Promise<RowDataPacket> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
-        const queryServicios = `SELECT servicios.nombre FROM ${this.nombreTabla} INNER JOIN facturas_servicios ON facturas_servicios.numero_folio = ${this.nombreTabla}.numero_folio INNER JOIN servicios ON facturas_servicios.nombre = servicios.nombre WHERE facturas_servicios.numero_folio = ?`;
+        const queryServicios = `SELECT facturas_servicios.precio_neto, servicios.nombre FROM ${this.nombreTabla} INNER JOIN facturas_servicios ON facturas_servicios.numero_folio = ${this.nombreTabla}.numero_folio INNER JOIN servicios ON facturas_servicios.nombre = servicios.nombre WHERE facturas_servicios.numero_folio = ?`;
 
         try {
             const [facturas] = await db.execute<RowDataPacket[]>(querySelect, [numero_folio]);
@@ -287,7 +320,7 @@ class Invoices {
                 [numero_folio]
             );
             //Se añaden servicios
-            facturas[0].servicios = serviciosFactura;
+            facturas[0].precio_por_servicio = serviciosFactura;
 
 
             return facturas[0];
