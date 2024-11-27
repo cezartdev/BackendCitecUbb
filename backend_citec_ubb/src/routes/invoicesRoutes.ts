@@ -28,14 +28,14 @@ const router = Router();
 *                       type: number
 *                       description: Es el iva de la cotizacion si es que existe
 *                       example: 0
-*                   fecha:
+*                   fecha_emision:
 *                       type: string
 *                       description: Es la fecha de emision de la factura o cotizacion
 *                       example: "2024-10-03"
-*                   rut_emisor:
+*                   remisor:
 *                       type: string
-*                       description: "Es el rut del emisor de la factura"
-*                       example: "77.123.456-7"
+*                       description: "Es el emisor de la factura"
+*                       example: "por decidir"
 *                   rut_receptor:
 *                       type: string
 *                       description: "Es el rut del receptor de la factura"
@@ -52,11 +52,18 @@ const router = Router();
 *                       type: string
 *                       description: "Estado de eliminado o activo"
 *                       example: "activo"
-*                   servicios:
+*                   usuario:
+*                       type: string
+*                       description: "Es el correo usuario que genero la factura"
+*                       example: "admin@gmail.com"
+*                   precio_por_servicio:
 *                       type: array
 *                       items:
 *                           type: object
 *                           properties:
+*                               precio_neto:
+*                                   type: number
+*                                   example: 10000
 *                               nombre:
 *                                   type: string
 *                                   example: "Construcciones"

@@ -228,6 +228,7 @@ class Invoices {
             doc.text(`Emisor: ${rut_emisor}`, { align: "left" });
             doc.text(`RUT Receptor: ${rut_receptor}`, { align: "left" });
             doc.text(`Giro: ${nombreGiro}`, { align: "left" });
+            doc.text(`Generado por: ${usuario}`, { align: "left" });
             doc.moveDown(1);
 
             // Línea divisoria
