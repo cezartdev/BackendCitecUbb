@@ -168,6 +168,18 @@ class Invoices {
                 throw new KeepFormatError(errors, 404);
             }
 
+            // if(iva !== pago_neto*0.19){
+            //     const errors = [
+            //         {
+            //             type: "field",
+            //             msg: "No coincide el iva",
+            //             value: `${iva}`,
+            //             path: "iva",
+            //             location: "body",
+            //         },
+            //     ];
+            //     throw new KeepFormatError(errors, 404);
+            // }
             const [usuarios] = await db.execute<RowDataPacket[]>(queryUsuario, [
                 usuario,
             ]);
@@ -297,6 +309,7 @@ class Invoices {
 
     static async getAll(): Promise<RowDataPacket[]> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado ='activo'`;
+        const queryServicios = `SELECT facturas_servicios.precio_neto, servicios.nombre FROM ${this.nombreTabla} INNER JOIN facturas_servicios ON facturas_servicios.numero_folio = ${this.nombreTabla}.numero_folio INNER JOIN servicios ON facturas_servicios.nombre = servicios.nombre WHERE facturas_servicios.numero_folio = ?`;
 
         try {
             const [invoices] = await db.execute<RowDataPacket[]>(querySelect);
@@ -315,6 +328,18 @@ class Invoices {
             }
 
 
+            for(const invoice of invoices){
+                
+                const [serviciosFactura] = await db.execute<RowDataPacket[]>(
+                    queryServicios,
+                    [invoice.numero_folio]
+                );
+                //Se añaden servicios
+                invoice.precio_por_servicio = serviciosFactura;
+            }
+
+
+
             return invoices;
         } catch (err) {
             throw err;
@@ -324,7 +349,7 @@ class Invoices {
     // Obtener todos
     static async getAllDeleted(): Promise<RowDataPacket[]> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado = 'eliminado' `;
-
+        const queryServicios = `SELECT facturas_servicios.precio_neto, servicios.nombre FROM ${this.nombreTabla} INNER JOIN facturas_servicios ON facturas_servicios.numero_folio = ${this.nombreTabla}.numero_folio INNER JOIN servicios ON facturas_servicios.nombre = servicios.nombre WHERE facturas_servicios.numero_folio = ?`;
         try {
             const [invoices] = await db.execute<RowDataPacket[]>(querySelect);
 
@@ -339,6 +364,16 @@ class Invoices {
                     },
                 ];
                 throw new KeepFormatError(errors, 404);
+            }
+
+            for(const invoice of invoices){
+                
+                const [serviciosFactura] = await db.execute<RowDataPacket[]>(
+                    queryServicios,
+                    [invoice.numero_folio]
+                );
+                //Se añaden servicios
+                invoice.precio_por_servicio = serviciosFactura;
             }
 
             return invoices;
@@ -417,6 +452,202 @@ class Invoices {
             
             const result = await this.getById(numero_folio);
             return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    static async update(
+        numero_folio: number,
+        pago_neto: number,
+        iva: number,
+        rut_receptor: string,
+        codigo_giro: string,
+        estado: string,
+        usuario: string,
+        precio_por_servicio: Array<{ precio_neto: number, nombre: string }>
+    ): Promise<RowDataPacket> {
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET pago_neto = ?, iva = ?, rut_receptor = ?, codigo_giro = ?, estado = ?, usuario = ? WHERE numero_folio = ? `;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
+
+        const queryEmisorReceptor = `SELECT * FROM empresas WHERE rut = ?`
+        const queryGiros = `SELECT * FROM giros WHERE codigo = ?`
+        const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`
+        const queryUsuario = `SELECT * FROM usuarios WHERE email = ?`
+        try {
+            
+            const [existingInvoice] = await db.execute<RowDataPacket[]>(
+                querySelect,
+                [numero_folio]
+            );
+            if (!existingInvoice[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "La factura que intenta actualizar no existe",
+                        value: `${numero_folio}`,
+                        path: "numero_folio",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            const [rutReceptor] = await db.execute<RowDataPacket[]>(queryEmisorReceptor, [
+                rut_receptor,
+            ]);
+            if (!rutReceptor[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Rut del receptor no encontrado",
+                        value: `${rut_receptor}`,
+                        path: "rut_receptor",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+            const [codigoGiro] = await db.execute<RowDataPacket[]>(queryGiros, [
+                codigo_giro,
+            ]);
+            if (!codigoGiro[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Codigo del giro no encontrado",
+                        value: `${codigo_giro}`,
+                        path: "codigo_giro",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            //verificar si el pago_neto es la suma de los servicios
+
+            let suma = 0;
+            const servicioSet = new Set<string>();
+            // Validar servicios
+            for (const servicio of precio_por_servicio) {
+                // Validar duplicados en la lista
+                if (servicioSet.has(servicio.nombre)) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "Servicio duplicado en la lista",
+                            value: `${servicio.nombre}`,
+                            path: "precio_por_servicio",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 409);
+                }
+                servicioSet.add(servicio.nombre);
+
+                const [servicioDB] = await db.execute<RowDataPacket[]>(queryServicios, [servicio.nombre]);
+                if (!servicioDB[0]) {
+                    const errors = [
+                        {
+                            type: "field",
+                            msg: "Servicio no encontrado",
+                            value: `${servicio.nombre}`,
+                            path: "precio_por_servicio",
+                            location: "body",
+                        },
+                    ];
+                    throw new KeepFormatError(errors, 404);
+                }
+
+                suma += servicio.precio_neto
+            }
+
+
+
+            if (suma !== pago_neto) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No coincide el precio de los servicios con el pago neto total",
+                        value: `${pago_neto}`,
+                        path: "precio_por_servicio",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            // if(iva !== pago_neto*0.19){
+            //     const errors = [
+            //         {
+            //             type: "field",
+            //             msg: "No coincide el iva",
+            //             value: `${iva}`,
+            //             path: "iva",
+            //             location: "body",
+            //         },
+            //     ];
+            //     throw new KeepFormatError(errors, 404);
+            // }
+
+            const [usuarios] = await db.execute<RowDataPacket[]>(queryUsuario, [
+                usuario,
+            ]);
+            if (!usuarios[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Usuario no encontrado",
+                        value: `${usuario}`,
+                        path: "usuario",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            const queryEstados = `SELECT * FROM estados WHERE nombre = ?`
+            const [estados] = await db.execute<RowDataPacket[]>(queryEstados, [
+                estado,
+            ]);
+            if (!estados[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "Estado no encontrado",
+                        value: `${estado}`,
+                        path: "estado",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            // Actualizar la información de la factura
+            await db.execute<ResultSetHeader>(queryUpdate, [
+                pago_neto,
+                iva,
+                rut_receptor,
+                codigo_giro,
+                estado,
+                usuario,
+                numero_folio
+            ]);
+
+            const deleteServices = `DELETE FROM facturas_servicios WHERE numero_folio = ?`;
+            await db.execute<ResultSetHeader>(deleteServices, [
+                numero_folio
+            ]);
+            // precio_por_servicio: Array<{ precio_neto: number, nombre: string }>
+            const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre, precio_neto) VALUES (?,?,?)`;
+            for (const servicio of precio_por_servicio) {
+                await db.execute<ResultSetHeader>(queryInsertService, [numero_folio, servicio.nombre, servicio.precio_neto]);
+            }
+
+
+            // Retornar la factura
+            const invoiceResult = await this.getById(numero_folio);
+            return invoiceResult;
         } catch (err) {
             throw err;
         }

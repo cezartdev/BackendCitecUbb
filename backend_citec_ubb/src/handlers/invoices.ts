@@ -54,14 +54,14 @@ export const deleteInvoice = async (req: Request, res: Response) => {
     }
 };
 
-// export const updateAllBusiness = async (req: Request, res: Response) => {
+export const updateAllInvoice = async (req: Request, res: Response) => {
 
-//     const { rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros } = req.body;
-//     try {
-//         const response = await Business.update(rut, nuevo_rut, razon_social, nombre_de_fantasia, email_factura, direccion, comuna, telefono, contactos, giros);
-//         res.status(201).json({ msg: "Empresa Actualizada correctamente", response });
-//     } catch (err) {
-//         const errorCode = err.code || 500;
-//         res.status(errorCode).json({ errors: err.details });
-//     }
-// };
+    const { numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio } = req.body;
+    try {
+        const response = await Invoice.update(numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio );
+        res.status(201).json({ msg: "Factura Actualizada correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};

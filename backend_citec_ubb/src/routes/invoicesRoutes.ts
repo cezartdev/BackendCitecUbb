@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
-import { createInvoice, deleteInvoice, getById } from "../handlers/invoices";
+import { createInvoice, deleteInvoice, getAll, getAllDeleted, getById, updateAllInvoice } from "../handlers/invoices";
 
 
 
@@ -51,7 +51,7 @@ const router = Router();
 *                   estado:
 *                       type: string
 *                       description: "Estado de eliminado o activo"
-*                       example: "activo"
+*                       example: "activo o eliminado"
 *                   usuario:
 *                       type: string
 *                       description: "Es el correo usuario que genero la factura"
@@ -235,7 +235,7 @@ router.post("/create", createInvoice);
  *                                                  type: string 
  *                                                  example: La factura que intenta eliminar no existe
  *                                              value:
- *                                                  type: string
+ *                                                  type: number
  *                                                  example: 5
  *                                              path:
  *                                                  type: string
@@ -333,5 +333,272 @@ router.delete("/delete/:numero_folio", deleteInvoice);
  *                                 
  */
 router.get("/get-by-id/:numero_folio", getById);
+
+/**
+ * @swagger
+ * /api/invoices/get-all:
+ *      get:
+ *          summary: Obtiene a todas las facturas en un arreglo de objetos
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de devolver las facturas con todas sus propiedades en un arreglo de objetos
+
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Facturas seleccionadas correctamente"
+ *                                  response:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#/components/schemas/Facturas'                                           
+ *                                              
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No existen facturas
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: ""                                                   
+ *              500:
+ *                  description: Error interno (Internal Server Error)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No se sabe como manejar la solicitud                              
+ *                                 
+ */
+router.get("/get-all",  getAll);
+
+
+/**
+ * @swagger
+ * /api/invoices/get-all-deleted:
+ *      get:
+ *          summary: Obtiene a todas las facturas en un arreglo de objetos
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de devolver las facturas eliminadas con todas sus propiedades en un arreglo de objetos
+ * 
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Facturas eliminadas seleccionadas correctamente"
+ *                                  response:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#/components/schemas/Facturas'                                           
+ *                                              
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No existen facturas eliminadas
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: ""
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: ""                                                   
+ *              500:
+ *                  description: Error interno (Internal Server Error)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: No se sabe como manejar la solicitud                              
+ *                                 
+ */
+router.get("/get-all-deleted",  getAllDeleted);
+
+
+/**
+ * @swagger
+ * /api/invoices/update:
+ *      put:
+ *          summary: Actualiza una factura Totalmente
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de editar o actualizar una factura de forma total o completa, es decir, se deben pasar obligatoriamente todos los atributos de la entidad
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Facturas'                         
+ *          responses:
+ *              201:
+ *                  description: Respuesta correcta (Created)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: Servicio Actualizado correctamente
+ *                                  response:
+ *                                      type: object
+ *                                      properties:
+ *                                          nombre:
+ *                                              type: string
+ *                                              example: "Revision 2 de muros"
+ *                                          created_at:
+ *                                              type: string
+ *                                              example: 2024-10-03T19:36:42.000Z
+ *                                          updated_at:
+ *                                              type: string
+ *                                              example: 2024-10-03T19:36:42.000Z 
+*              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: El nombre no está en el formato correcto
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: "2291234572\a+@d"
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: nombre
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                         
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: El servicio que intenta actualizar no existe
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: "Lavado de autos"
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: nombre
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                        
+ *              409:
+ *                  description: Recurso existente o duplicado (Conflict)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: El nuevo nombre pertenece a otro servicio
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: "Revision 2 de muros"
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: nuevo_nombre
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                               
+ *                                              
+ *         
+ */
+router.put("/update", updateAllInvoice);
 
 export default router;
