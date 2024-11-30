@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
 import {handleInputErrors} from "../middleware/index"
-import { createInvoice } from "../handlers/invoices";
+import { createInvoice, deleteInvoice, getById } from "../handlers/invoices";
 
 
 
@@ -32,7 +32,7 @@ const router = Router();
 *                       type: string
 *                       description: Es la fecha de emision de la factura o cotizacion
 *                       example: "2024-10-03"
-*                   remisor:
+*                   emisor:
 *                       type: string
 *                       description: "Es el emisor de la factura"
 *                       example: "por decidir"
@@ -147,7 +147,7 @@ const router = Router();
  *                                                  type: string 
  *                                                  example: La factura que intenta actualizar no existe
  *                                              value:
- *                                                  type: string
+ *                                                  type: number
  *                                                  example: 2
  *                                              path:
  *                                                  type: string
@@ -161,6 +161,177 @@ const router = Router();
  */
 router.post("/create", createInvoice);
 
+/**
+ * @swagger
+ * /api/invoices/delete/{numero_folio}:
+ *      delete:
+ *          summary: Elimina una factura
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de eliminar a una factura
+ *          parameters:
+ *            - in: path
+ *              name: numero_folio
+ *              description: El numero de folio de una factura
+ *              required: true
+ *              schema:
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Factura eliminada correctamente"
+ *                                  response:
+ *                                      $ref: '#/components/schemas/Facturas'
+*              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Formato del numero de folio Incorrecto.
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: dgf2
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                         
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: La factura que intenta eliminar no existe
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 5
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                               
+ */
 
+router.delete("/delete/:numero_folio", deleteInvoice);
+
+
+/**
+ * @swagger
+ * /api/invoices/get-by-id/{numero_folio}:
+ *      get:
+ *          summary: Obtiene a una factura segun su numero de folio
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de devolver a una factura con todas sus propiedades en un objeto
+ *          parameters:
+ *            - in: path
+ *              name: numero_folio
+ *              description: El numero de folio de la factura
+ *              required: true
+ *              schema:
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: Respuesta correcta (OK)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: "Factura obtenida correctamente"
+ *                                  response:
+ *                                      $ref: '#/components/schemas/Facturas'
+ *              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Formato del folio Incorrecto
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: asd1l
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                        
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Factura no encontrada
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: 7
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: params                                                                              
+ *                                 
+ */
+router.get("/get-by-id/:numero_folio", getById);
 
 export default router;

@@ -287,7 +287,7 @@ class Invoices {
                 await db.execute<ResultSetHeader>(queryInsertService, [numeroFolio, servicio.nombre, servicio.precio_neto]);
             }
 
-            const invoiceResult = await this.getById(String(numeroFolio));
+            const invoiceResult = await this.getById(numeroFolio);
             // Devolvemos la factura creada
             return invoiceResult;
         } catch (err) {
@@ -295,9 +295,60 @@ class Invoices {
         }
     }
 
+    static async getAll(): Promise<RowDataPacket[]> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado ='activo'`;
+
+        try {
+            const [invoices] = await db.execute<RowDataPacket[]>(querySelect);
+
+            if (!invoices[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen facturas",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+
+            return invoices;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    // Obtener todos
+    static async getAllDeleted(): Promise<RowDataPacket[]> {
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE estado = 'eliminado' `;
+
+        try {
+            const [invoices] = await db.execute<RowDataPacket[]>(querySelect);
+
+            if (!invoices[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No existen facturas eliminadas",
+                        value: ``,
+                        path: "",
+                        location: "",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            return invoices;
+        } catch (err) {
+            throw err;
+        }
+    }
 
     // Obtener por ID
-    static async getById(numero_folio: string): Promise<RowDataPacket> {
+    static async getById(numero_folio: number): Promise<RowDataPacket> {
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
         const queryServicios = `SELECT facturas_servicios.precio_neto, servicios.nombre FROM ${this.nombreTabla} INNER JOIN facturas_servicios ON facturas_servicios.numero_folio = ${this.nombreTabla}.numero_folio INNER JOIN servicios ON facturas_servicios.nombre = servicios.nombre WHERE facturas_servicios.numero_folio = ?`;
 
@@ -330,6 +381,46 @@ class Invoices {
         }
     }
 
+    static async delete(numero_folio: number): Promise<RowDataPacket> {
+        const queryDelete = `UPDATE ${this.nombreTabla} SET estado = 'eliminado' WHERE numero_folio = ?`;
+        const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
+        try {
+            const [invoices] = await db.execute<RowDataPacket[]>(querySelect, [numero_folio]);
+            if (!invoices[0]) {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "La factura que intenta eliminar no existe",
+                        value: `${numero_folio}`,
+                        path: `nombre`,
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
+
+            if (invoices[0].estado === 'eliminado') {
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "La factura que intenta eliminar ya ha sido eliminada",
+                        value: `${numero_folio}`,
+                        path: `nombre`,
+                        location: "params",
+                    },
+                ];
+                throw new KeepFormatError(errors, 409);
+            }
+
+
+            await db.execute<ResultSetHeader>(queryDelete, [numero_folio]);
+            
+            const result = await this.getById(numero_folio);
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
 
 }
 
