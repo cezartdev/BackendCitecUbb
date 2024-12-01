@@ -84,7 +84,37 @@ const router = Router();
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/Facturas'
+ *                          type: object
+ *                          properties:
+ *                              pago_neto:
+ *                                  type: number
+ *                                  example: 30000
+ *                              iva:
+ *                                  type: number
+ *                                  example: 5700
+ *                              rut_receptor:
+ *                                  type: string
+ *                                  example: "77.123.456-9"
+ *                              codigo_giro:
+ *                                  type: number
+ *                                  example: 11101
+ *                              usuario:
+ *                                  type: string
+ *                                  example: "admin@gmail.com"
+ *                              exento_iva:
+ *                                 type: string
+ *                                 example: no
+ *                              precio_por_servicio:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          precio_neto:
+ *                                              type: number
+ *                                              example: 5000
+ *                                          nombre:
+ *                                              type: string
+ *                                              example: "Construcciones 2a"  
  *                              
  *          responses:
  *              201:
@@ -284,6 +314,165 @@ router.delete("/delete/:numero_folio",
     handleInputErrors,
     deleteInvoice);
 
+/**
+ * @swagger
+ * /api/invoices/update:
+ *      put:
+ *          summary: Actualiza una factura Totalmente
+ *          tags:
+ *              - Facturas
+ *          description: Esta ruta se encarga de editar o actualizar una factura de forma total o completa, es decir, se deben pasar obligatoriamente todos los atributos de la entidad
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              numero_folio:
+ *                                  type: number
+ *                                  example: 1
+ *                              pago_neto:
+ *                                  type: number
+ *                                  example: 30000
+ *                              iva:
+ *                                  type: number
+ *                                  example: 5700
+ *                              rut_receptor:
+ *                                  type: string
+ *                                  example: "77.123.456-9"
+ *                              codigo_giro:
+ *                                  type: number
+ *                                  example: 11101
+ *                              estado:
+ *                                  type: string
+ *                                  example: "activo o eliminado"
+ *                              usuario:
+ *                                  type: string
+ *                                  example: "admin@gmail.com"
+ *                              exento_iva:
+ *                                 type: string
+ *                                 example: no
+ *                              precio_por_servicio:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          precio_neto:
+ *                                              type: number
+ *                                              example: 5000
+ *                                          nombre:
+ *                                              type: string
+ *                                              example: "Construcciones 2a"                       
+ *          responses:
+ *              201:
+ *                  description: Respuesta correcta (Created)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  msg:
+ *                                      type: string
+ *                                      example: Factura Actualizado correctamente
+ *                                  response:
+ *                                      $ref: '#/components/schemas/Facturas'  
+*              400:
+ *                  description: Peticion mal hecha (Bad Request)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: Tipo de dato incorrecto para el pago neto
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: "2291234572\a+@d"
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: pago_neto
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                                         
+ *              404:
+ *                  description: Recurso no encontrado (Not Found)
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: object
+ *                              properties:
+ *                                  errors:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              type:
+ *                                                  type: string
+ *                                                  example: field
+ *                                              msg:
+ *                                                  type: string 
+ *                                                  example: La factura que intenta actualizar no existe
+ *                                              value:
+ *                                                  type: string
+ *                                                  example: "Lavado de autos"
+ *                                              path:
+ *                                                  type: string
+ *                                                  example: numero_folio
+ *                                              location:
+ *                                                  type: string
+ *                                                  example: body                             
+ *                                              
+ *         
+ */
+router.put("/update",
+    body("numero_folio")
+        .notEmpty().withMessage("El numero de folio está vacío")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el numero de folio"),
+    body("pago_neto")
+        .notEmpty().withMessage("El pago neto esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("iva")
+        .notEmpty().withMessage("El iva esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el iva"),
+    body("rut_receptor")
+        .notEmpty().withMessage("El rut receptor esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el rut_receptor")
+        .matches(rutRegex).withMessage("Formato de rut invalido. Debe ser '11.111.111-1'"),
+    body("codigo_giro")
+        .notEmpty().withMessage("El codigo giro esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("estado")
+        .notEmpty().withMessage("El estado esta vacío")
+        .isString().withMessage("Tipo de dato incorrecto para el estado"),
+    body("usuario")
+        .notEmpty().withMessage("El usuario no puede estar vacio")
+        .isEmail().withMessage("El email del usuario no está en el formato correcto")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value),
+    body("exento_iva")
+        .notEmpty().withMessage("El valor exento iva esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el valor exento iva")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value)
+        .custom(value => value === "si" || value === "no").withMessage("El valor exento iva debe ser 'si' o 'no'"),
+    body("precio_por_servicio").isArray({ min: 1 }).withMessage("Debe incluir al menos un servicio"),
+        body("precio_por_servicio.*.precio_neto")
+            .notEmpty().withMessage("El precio_neto esta vacio")
+            .isNumeric().withMessage("Tipo de dato incorrecto para el precio neto"),
+        body("precio_por_servicio.*.nombre")
+            .notEmpty().withMessage("El nombre del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
+            .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    updateAllInvoice);
 
 /**
  * @swagger
@@ -520,165 +709,6 @@ router.get("/get-all",  getAll);
 router.get("/get-all-deleted",  getAllDeleted);
 
 
-/**
- * @swagger
- * /api/invoices/update:
- *      put:
- *          summary: Actualiza una factura Totalmente
- *          tags:
- *              - Facturas
- *          description: Esta ruta se encarga de editar o actualizar una factura de forma total o completa, es decir, se deben pasar obligatoriamente todos los atributos de la entidad
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Facturas'                         
- *          responses:
- *              201:
- *                  description: Respuesta correcta (Created)
- *                  content:
- *                      application/json:
- *                          schema:
- *                              type: object
- *                              properties:
- *                                  msg:
- *                                      type: string
- *                                      example: Servicio Actualizado correctamente
- *                                  response:
- *                                      type: object
- *                                      properties:
- *                                          nombre:
- *                                              type: string
- *                                              example: "Revision 2 de muros"
- *                                          created_at:
- *                                              type: string
- *                                              example: 2024-10-03T19:36:42.000Z
- *                                          updated_at:
- *                                              type: string
- *                                              example: 2024-10-03T19:36:42.000Z 
-*              400:
- *                  description: Peticion mal hecha (Bad Request)
- *                  content:
- *                      application/json:
- *                          schema:
- *                              type: object
- *                              properties:
- *                                  errors:
- *                                      type: array
- *                                      items:
- *                                          type: object
- *                                          properties:
- *                                              type:
- *                                                  type: string
- *                                                  example: field
- *                                              msg:
- *                                                  type: string 
- *                                                  example: El nombre no está en el formato correcto
- *                                              value:
- *                                                  type: string
- *                                                  example: "2291234572\a+@d"
- *                                              path:
- *                                                  type: string
- *                                                  example: nombre
- *                                              location:
- *                                                  type: string
- *                                                  example: body                                         
- *              404:
- *                  description: Recurso no encontrado (Not Found)
- *                  content:
- *                      application/json:
- *                          schema:
- *                              type: object
- *                              properties:
- *                                  errors:
- *                                      type: array
- *                                      items:
- *                                          type: object
- *                                          properties:
- *                                              type:
- *                                                  type: string
- *                                                  example: field
- *                                              msg:
- *                                                  type: string 
- *                                                  example: El servicio que intenta actualizar no existe
- *                                              value:
- *                                                  type: string
- *                                                  example: "Lavado de autos"
- *                                              path:
- *                                                  type: string
- *                                                  example: nombre
- *                                              location:
- *                                                  type: string
- *                                                  example: body                                        
- *              409:
- *                  description: Recurso existente o duplicado (Conflict)
- *                  content:
- *                      application/json:
- *                          schema:
- *                              type: object
- *                              properties:
- *                                  errors:
- *                                      type: array
- *                                      items:
- *                                          type: object
- *                                          properties:
- *                                              type:
- *                                                  type: string
- *                                                  example: field
- *                                              msg:
- *                                                  type: string 
- *                                                  example: El nuevo nombre pertenece a otro servicio
- *                                              value:
- *                                                  type: string
- *                                                  example: "Revision 2 de muros"
- *                                              path:
- *                                                  type: string
- *                                                  example: nuevo_nombre
- *                                              location:
- *                                                  type: string
- *                                                  example: body                               
- *                                              
- *         
- */
-router.put("/update",
-    body("numero_folio")
-        .notEmpty().withMessage("El numero de folio está vacío")
-        .isNumeric().withMessage("Tipo de dato incorrecto para el numero de folio"),
-    body("pago_neto")
-        .notEmpty().withMessage("El pago neto esta vacio")
-        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
-    body("iva")
-        .notEmpty().withMessage("El iva esta vacio")
-        .isNumeric().withMessage("Tipo de dato incorrecto para el iva"),
-    body("rut_receptor")
-        .notEmpty().withMessage("El rut receptor esta vacio")
-        .isString().withMessage("Tipo de dato incorrecto para el rut_receptor")
-        .matches(rutRegex).withMessage("Formato de rut invalido. Debe ser '11.111.111-1'"),
-    body("codigo_giro")
-        .notEmpty().withMessage("El codigo giro esta vacio")
-        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
-    body("estado")
-        .notEmpty().withMessage("El estado esta vacío")
-        .isString().withMessage("Tipo de dato incorrecto para el estado"),
-    body("usuario")
-        .notEmpty().withMessage("El usuario no puede estar vacio")
-        .isEmail().withMessage("El email del usuario no está en el formato correcto")
-        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value),
-    body("exento_iva")
-        .notEmpty().withMessage("El valor exento iva esta vacio")
-        .isString().withMessage("Tipo de dato incorrecto para el valor exento iva")
-        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value)
-        .custom(value => value === "si" || value === "no").withMessage("El valor exento iva debe ser 'si' o 'no'"),
-    body("precio_por_servicio").isArray({ min: 1 }).withMessage("Debe incluir al menos un servicio"),
-        body("precio_por_servicio.*.precio_neto")
-            .notEmpty().withMessage("El precio_neto esta vacio")
-            .isNumeric().withMessage("Tipo de dato incorrecto para el precio neto"),
-        body("precio_por_servicio.*.nombre")
-            .notEmpty().withMessage("El nombre del contacto está vacío")
-            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
-            .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
-    handleInputErrors,
-    updateAllInvoice);
+
 
 export default router;
