@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import Invoice from "../models/Invoices.model";
 
 export const createInvoice = async (req: Request, res: Response) => {
-    const { pago_neto, iva, rut_receptor, codigo_giro, servicios, usuario, precio_por_servicio } = req.body;
+    const { pago_neto, iva, rut_receptor, codigo_giro, usuario, precio_por_servicio, exento_iva } = req.body;
     try {
-        const response = await Invoice.create(pago_neto, iva, rut_receptor, codigo_giro, usuario, precio_por_servicio);
+        const response = await Invoice.create(pago_neto, iva, rut_receptor, codigo_giro, usuario, exento_iva, precio_por_servicio);
         res.status(201).json({ msg: "Factura creada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;
@@ -56,9 +56,9 @@ export const deleteInvoice = async (req: Request, res: Response) => {
 
 export const updateAllInvoice = async (req: Request, res: Response) => {
 
-    const { numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio } = req.body;
+    const { numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio, exento_iva } = req.body;
     try {
-        const response = await Invoice.update(numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio );
+        const response = await Invoice.update(numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, exento_iva, precio_por_servicio );
         res.status(201).json({ msg: "Factura Actualizada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;

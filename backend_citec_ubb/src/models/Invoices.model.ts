@@ -25,6 +25,7 @@ class Invoices {
                 imagen VARCHAR(200),
                 estado VARCHAR(20) NOT NULL DEFAULT 'activo',
                 usuario VARCHAR(200) NOT NULL,
+                exento_iva ENUM('si', 'no') DEFAULT 'no',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (numero_folio),
@@ -59,9 +60,10 @@ class Invoices {
         rut_receptor: string,
         codigo_giro: string,
         usuario: string,
+        exento_iva: string,
         precio_por_servicio: Array<{ precio_neto: number, nombre: string }>
     ): Promise<RowDataPacket> {
-        const queryInsert = `INSERT INTO ${this.nombreTabla} (pago_neto, iva, emisor, rut_receptor, codigo_giro, imagen, usuario) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const queryInsert = `INSERT INTO ${this.nombreTabla} (pago_neto, iva, emisor, rut_receptor, codigo_giro, imagen, usuario, exento_iva) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         const queryEmisorReceptor = `SELECT * FROM empresas WHERE rut = ?`
         const queryGiros = `SELECT * FROM giros WHERE codigo = ?`
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`
@@ -168,18 +170,18 @@ class Invoices {
                 throw new KeepFormatError(errors, 404);
             }
 
-            // if(iva !== pago_neto*0.19){
-            //     const errors = [
-            //         {
-            //             type: "field",
-            //             msg: "No coincide el iva",
-            //             value: `${iva}`,
-            //             path: "iva",
-            //             location: "body",
-            //         },
-            //     ];
-            //     throw new KeepFormatError(errors, 404);
-            // }
+            if(iva !== pago_neto*0.19 && exento_iva === 'no'){
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No coincide el iva",
+                        value: `${iva}`,
+                        path: "iva",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
             const [usuarios] = await db.execute<RowDataPacket[]>(queryUsuario, [
                 usuario,
             ]);
@@ -207,7 +209,8 @@ class Invoices {
                 rut_receptor,    // 4
                 codigo_giro,     // 5
                 null,            // 6 (valor para `imagen`)
-                usuario          // 7
+                usuario ,         // 7
+                exento_iva
             ]);
 
 
@@ -241,6 +244,7 @@ class Invoices {
             doc.text(`RUT Receptor: ${rut_receptor}`, { align: "left" });
             doc.text(`Giro: ${nombreGiro}`, { align: "left" });
             doc.text(`Generado por: ${usuario}`, { align: "left" });
+            doc.text(`Exento de iva: ${exento_iva.toLocaleUpperCase()}`, { align: "left" });
             doc.moveDown(1);
 
             // Línea divisoria
@@ -465,9 +469,10 @@ class Invoices {
         codigo_giro: string,
         estado: string,
         usuario: string,
+        exento_iva: string,
         precio_por_servicio: Array<{ precio_neto: number, nombre: string }>
     ): Promise<RowDataPacket> {
-        const queryUpdate = `UPDATE ${this.nombreTabla} SET pago_neto = ?, iva = ?, rut_receptor = ?, codigo_giro = ?, estado = ?, usuario = ? WHERE numero_folio = ? `;
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET pago_neto = ?, iva = ?, rut_receptor = ?, codigo_giro = ?, estado = ?, usuario = ?, exento_iva = ?  WHERE numero_folio = ? `;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
 
         const queryEmisorReceptor = `SELECT * FROM empresas WHERE rut = ?`
@@ -577,18 +582,18 @@ class Invoices {
                 throw new KeepFormatError(errors, 404);
             }
 
-            // if(iva !== pago_neto*0.19){
-            //     const errors = [
-            //         {
-            //             type: "field",
-            //             msg: "No coincide el iva",
-            //             value: `${iva}`,
-            //             path: "iva",
-            //             location: "body",
-            //         },
-            //     ];
-            //     throw new KeepFormatError(errors, 404);
-            // }
+            if(iva !== pago_neto*0.19 && exento_iva === 'no'){
+                const errors = [
+                    {
+                        type: "field",
+                        msg: "No coincide el iva",
+                        value: `${iva}`,
+                        path: "iva",
+                        location: "body",
+                    },
+                ];
+                throw new KeepFormatError(errors, 404);
+            }
 
             const [usuarios] = await db.execute<RowDataPacket[]>(queryUsuario, [
                 usuario,
