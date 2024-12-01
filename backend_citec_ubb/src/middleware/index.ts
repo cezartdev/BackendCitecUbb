@@ -130,3 +130,13 @@ export const validateApiKey = async (
 export const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
 };
+
+// Convierte todo el string a minúsculas
+export const toLowerCaseString = (str: string) => {
+    return str.toLowerCase();
+};
+
+// Convierte todo el string a mayúsculas
+export const toUpperCaseString = (str: string) => {
+    return str.toUpperCase();
+};

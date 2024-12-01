@@ -1,10 +1,10 @@
 import {Router} from "express"
 import {body,param} from "express-validator"
-import {handleInputErrors} from "../middleware/index"
+import {handleInputErrors, capitalizeWords, toLowerCaseString, toUpperCaseString} from "../middleware/index"
 import { createInvoice, deleteInvoice, getAll, getAllDeleted, getById, updateAllInvoice } from "../handlers/invoices";
 
 
-
+const rutRegex = /^[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}$/;
 
 const router = Router();
 
@@ -159,7 +159,39 @@ const router = Router();
  *                                              
  *         
  */
-router.post("/create", createInvoice);
+router.post("/create", 
+    body("pago_neto")
+        .notEmpty().withMessage("El pago neto esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("iva")
+        .notEmpty().withMessage("El iva esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el iva"),
+    body("rut_receptor")
+        .notEmpty().withMessage("El rut receptor esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el rut_receptor")
+        .matches(rutRegex).withMessage("Formato de rut invalido. Debe ser '11.111.111-1'"),
+    body("codigo_giro")
+        .notEmpty().withMessage("El codigo giro esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("usuario")
+        .notEmpty().withMessage("El usuario no puede estar vacio")
+        .isEmail().withMessage("El email del usuario no está en el formato correcto")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value),
+    body("exento_iva")
+        .notEmpty().withMessage("El valor exento iva esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el valor exento iva")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value)
+        .custom(value => value === "si" || value === "no").withMessage("El valor exento iva debe ser 'si' o 'no'"),
+    body("precio_por_servicio").isArray({ min: 1 }).withMessage("Debe incluir al menos un servicio"),
+        body("precio_por_servicio.*.precio_neto")
+            .notEmpty().withMessage("El precio_neto esta vacio")
+            .isNumeric().withMessage("Tipo de dato incorrecto para el precio neto"),
+        body("precio_por_servicio.*.nombre")
+            .notEmpty().withMessage("El nombre del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
+            .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    createInvoice);
 
 /**
  * @swagger
@@ -245,7 +277,12 @@ router.post("/create", createInvoice);
  *                                                  example: params                                               
  */
 
-router.delete("/delete/:numero_folio", deleteInvoice);
+router.delete("/delete/:numero_folio",
+    param("numero_folio")
+        .notEmpty().withMessage("El numero del folio esta vacío")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el numero de folio"),
+    handleInputErrors,
+    deleteInvoice);
 
 
 /**
@@ -332,7 +369,12 @@ router.delete("/delete/:numero_folio", deleteInvoice);
  *                                                  example: params                                                                              
  *                                 
  */
-router.get("/get-by-id/:numero_folio", getById);
+router.get("/get-by-id/:numero_folio",
+    param("numero_folio")
+        .notEmpty().withMessage("El numero del folio esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el numero del folio"),
+    handleInputErrors,
+    getById);
 
 /**
  * @swagger
@@ -599,6 +641,44 @@ router.get("/get-all-deleted",  getAllDeleted);
  *                                              
  *         
  */
-router.put("/update", updateAllInvoice);
+router.put("/update",
+    body("numero_folio")
+        .notEmpty().withMessage("El numero de folio está vacío")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el numero de folio"),
+    body("pago_neto")
+        .notEmpty().withMessage("El pago neto esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("iva")
+        .notEmpty().withMessage("El iva esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el iva"),
+    body("rut_receptor")
+        .notEmpty().withMessage("El rut receptor esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el rut_receptor")
+        .matches(rutRegex).withMessage("Formato de rut invalido. Debe ser '11.111.111-1'"),
+    body("codigo_giro")
+        .notEmpty().withMessage("El codigo giro esta vacio")
+        .isNumeric().withMessage("Tipo de dato incorrecto para el pago_neto"),
+    body("estado")
+        .notEmpty().withMessage("El estado esta vacío")
+        .isString().withMessage("Tipo de dato incorrecto para el estado"),
+    body("usuario")
+        .notEmpty().withMessage("El usuario no puede estar vacio")
+        .isEmail().withMessage("El email del usuario no está en el formato correcto")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value),
+    body("exento_iva")
+        .notEmpty().withMessage("El valor exento iva esta vacio")
+        .isString().withMessage("Tipo de dato incorrecto para el valor exento iva")
+        .customSanitizer(value => typeof value === "string" ? toLowerCaseString(value) : value)
+        .custom(value => value === "si" || value === "no").withMessage("El valor exento iva debe ser 'si' o 'no'"),
+    body("precio_por_servicio").isArray({ min: 1 }).withMessage("Debe incluir al menos un servicio"),
+        body("precio_por_servicio.*.precio_neto")
+            .notEmpty().withMessage("El precio_neto esta vacio")
+            .isNumeric().withMessage("Tipo de dato incorrecto para el precio neto"),
+        body("precio_por_servicio.*.nombre")
+            .notEmpty().withMessage("El nombre del contacto está vacío")
+            .isString().withMessage("Tipo de dato incorrecto para el nombre del contacto")
+            .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
+    handleInputErrors,
+    updateAllInvoice);
 
 export default router;

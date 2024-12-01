@@ -649,7 +649,7 @@ router.get("/get-all-deleted", getAllDeleted);
  *                                 
  */
 router.get("/get-by-id/:nombre",
-    body("nombre")
+    param("nombre")
         .notEmpty().withMessage("El nombre esta vacio")
         .isString().withMessage("Tipo de dato incorrecto para el nombre")
         .customSanitizer(value => typeof value === "string" ? capitalizeWords(value) : value),
