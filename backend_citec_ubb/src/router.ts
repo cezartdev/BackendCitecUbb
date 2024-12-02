@@ -24,6 +24,9 @@ router.use("/commune", communeRoutes);
 router.use("/business", businessRoutes);
 router.use("/category", categoryRoutes);
 router.use("/contacts", contactsRoutes);
+router.use("/services", servicesRoutes);
+router.use("/invoices", invoicesRoutes);
+router.use("/work-order", workOrderRoutes);
 
 export default router;
 
