@@ -29,7 +29,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/giro/get-all:
+ * /api/business-line/get-all:
  *      get:
  *          summary: Obtiene todos los giros en un arreglo de objetos
  *          tags:
@@ -84,16 +84,16 @@ router.get("/get-all", getAll);
 
 /**
  * @swagger
- * /api/province/get-by-id/{id}:
+ * /api/business-line/get-by-id/{id}:
  *      get:
- *          summary: Obtiene a una provincia segun su id
+ *          summary: Obtiene a un giro segun su codigo
  *          tags:
- *              - Provincias
- *          description: Esta ruta se encarga de devolver a una provincia con todos sus propiedades en un objeto
+ *              - Giros
+ *          description: Esta ruta se encarga de devolver a un giro con todas sus propiedades en un objeto
  *          parameters:
  *            - in: path
  *              name: id
- *              description: El codigo territorial de la provincia
+ *              description: El codigo del giro
  *              required: true
  *              schema:
  *                  type: string
@@ -107,19 +107,22 @@ router.get("/get-all", getAll);
  *                              properties:
  *                                  msg:
  *                                      type: string
- *                                      example: "Provincia seleccionada correctamente"
+ *                                      example: "Giro seleccionada correctamente"
  *                                  response:
  *                                          type: object
  *                                          properties:
- *                                               id:
+ *                                               codigo:
  *                                                  type: number
- *                                                  example: 11
+ *                                                  example: 11101
  *                                               nombre:
  *                                                  type: string
- *                                                  example: Iquique
- *                                               region:
- *                                                  type: number
- *                                                  example: 1
+ *                                                  example: CULTIVO DE TRIGO
+ *                                               afecto_iva:
+ *                                                  type: string
+ *                                                  example: SI
+ *                                               categoria:
+ *                                                  type: string
+ *                                                  example: AGRICULTURA, GANADERÍA, SILVICULTURA Y PESCA
  *                                               created_at:
  *                                                  type: string
  *                                                  example: 2024-09-29T22:35:16.000Z                                           

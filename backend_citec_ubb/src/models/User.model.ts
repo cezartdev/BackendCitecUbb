@@ -31,7 +31,8 @@ class User {
         const insertDataQuery = `
             INSERT INTO ${this.nombreTabla} (email, nombre, apellido,contraseña,nombre_tipo) VALUES
             ('admin@gmail.com', 'admin', 'admin','${hashedAdminPassword}','admin'),
-            ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario')
+            ('user@gmail.com', 'UserFirstName' ,'UserLastName', '${hashedUserPassword}', 'usuario'),
+            ('profe@gmail.com', 'Ariel' ,'Andia', '${hashedUserPassword}', 'admin')
             ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
         `;
 

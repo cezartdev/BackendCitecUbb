@@ -12,7 +12,7 @@ class Province {
         const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                 id int NOT NULL COMMENT 'ID provincia',
-				nombre varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la region',
+				nombre varchar(30) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la provincia',
                 region int NOT NULL COMMENT 'ID region asociada',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
