@@ -18,7 +18,7 @@ export const getAll = async (req: Request, res: Response) => {
         const response = await WorkOrder.getAll();
         res.status(200).json({ msg: "Ordenes de trabajo seleccionadas correctamente", response });
     } catch (err) {
-        res.status(500).json({ errors: err.message });
+        res.status(500).json({ errors: err.details });
     }
 };
 
