@@ -1,7 +1,7 @@
 import db from "../config/db"
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import KeepFormatError from "../utils/KeepFormatErrors";
-import PdfTransform  from "../utils/PdfTransform";
+import {PdfTransformInvoice, PdfTransformWorkOrder}  from "../utils/PdfTransform";
 import path from "path";
 
 
@@ -214,11 +214,8 @@ class Invoices {
 
             const nombreGiro = codigoGiro[0].nombre;
             const numeroFolio = result.insertId;
-            const relativePdfPath = path.posix.join("pdf", `factura_${numeroFolio}.pdf`);
-            const absolutePdfPath = path.join(__dirname, "..", "../", relativePdfPath);
 
-
-            PdfTransform(numeroFolio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio, absolutePdfPath);
+            const relativePdfPath = PdfTransformInvoice(numeroFolio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio);
 
             // Actualizar la ruta del PDF en la base de datos
             const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
@@ -243,6 +240,7 @@ class Invoices {
 
         try {
             const [invoices] = await db.execute<RowDataPacket[]>(querySelect);
+
 
             if (!invoices[0]) {
                 const errors = [
@@ -577,9 +575,7 @@ class Invoices {
 
             const nombreGiro = codigoGiro[0].nombre;
             const rut_emisor = "Rut Citec"
-            const relativePdfPath = path.posix.join("pdf", `factura_${numero_folio}.pdf`);
-            const absolutePdfPath = path.join(__dirname, "..", "../", relativePdfPath);
-            PdfTransform(numero_folio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio, absolutePdfPath);
+            PdfTransformInvoice(numero_folio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio);
             // Retornar la factura
             const invoiceResult = await this.getById(numero_folio);
             return invoiceResult;
