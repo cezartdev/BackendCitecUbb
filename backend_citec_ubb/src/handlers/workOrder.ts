@@ -1,6 +1,16 @@
 import { Request, Response } from 'express';
 import WorkOrder from "../models/WorkOrder.model";
 
+export const createWorkOrder = async (req: Request, res: Response) => {
+    const { numero_folio, observacion, cliente, direccion, provincia, comuna, descripcion, servicios } = req.body;
+    try {
+        const response = await WorkOrder.create(numero_folio, observacion, cliente, direccion, provincia, comuna, descripcion, servicios);
+        res.status(201).json({ msg: "Orden de trabajo creada correctamente", response });
+    } catch (err) {
+        const errorCode = err.code || 500;
+        res.status(errorCode).json({ errors: err.details });
+    }
+};
 
 export const getAll = async (req: Request, res: Response) => {
 
@@ -33,7 +43,7 @@ export const getById = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteInvoice = async (req: Request, res: Response) => {
+export const deleteWorkOrder = async (req: Request, res: Response) => {
     const numero_folio = Number(req.params.numero_folio);
     try {
         const response = await WorkOrder.delete(numero_folio);
@@ -44,11 +54,11 @@ export const deleteInvoice = async (req: Request, res: Response) => {
     }
 };
 
-export const updateAllInvoice = async (req: Request, res: Response) => {
+export const updateAllWorkOrder = async (req: Request, res: Response) => {
 
-    const { numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, precio_por_servicio, exento_iva } = req.body;
+    const { numero_folio, observacion, cliente, direccion, provincia, comuna, estado, descripcion, servicios } = req.body;
     try {
-        const response = await WorkOrder.update(numero_folio, pago_neto, iva, rut_receptor, codigo_giro, estado, usuario, exento_iva, precio_por_servicio );
+        const response = await WorkOrder.update(numero_folio, observacion, cliente, direccion, provincia, comuna, estado, descripcion, servicios );
         res.status(201).json({ msg: "Orden de trabajo actualizada correctamente", response });
     } catch (err) {
         const errorCode = err.code || 500;
