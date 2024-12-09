@@ -2,6 +2,7 @@ import db from "../config/db";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import KeepFormatError from "../utils/KeepFormatErrors";
 import path from "path";
+import { PdfTransformWorkOrder } from "../utils/PdfTransform";
 
 class WorkOrder {
     static dependencies = ["facturas", "provincias", "comunas", "empresas", "estados"]; //agregar clave foranea de factura al final para probar
@@ -12,8 +13,8 @@ class WorkOrder {
         const createTableQuery = `
                 CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                     numero_folio INT PRIMARY KEY,
-                    fecha_solicitud DATE NOT NULL,
-                    fecha_entrega DATE NOT NULL,
+                    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    fecha_entrega TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     observacion VARCHAR(300) NOT NULL,
                     cliente VARCHAR(200) NOT NULL,
                     direccion VARCHAR(250) NOT NULL,
@@ -23,6 +24,7 @@ class WorkOrder {
                     comuna INT NOT NULL,
                     descripcion VARCHAR(100) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     FOREIGN KEY (numero_folio) REFERENCES facturas(numero_folio) ON UPDATE CASCADE,
                     FOREIGN KEY (comuna) REFERENCES comunas(id) ON UPDATE CASCADE,
                     FOREIGN KEY (provincia) REFERENCES provincias(id) ON UPDATE CASCADE,
@@ -50,7 +52,8 @@ class WorkOrder {
         descripcion: string,
         servicios: Array<{ nombre: string }>
     ): Promise<RowDataPacket> {
-        const queryInsert = `INSERT INTO ${this.nombreTabla} (numero_folio, observacion, cliente, direccion, provincia, comuna ,descripcion) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const queryInsert = `
+        INSERT INTO ${this.nombreTabla} (numero_folio, observacion, cliente, direccion, provincia, comuna, descripcion) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const queryCliente = `SELECT * FROM empresas WHERE rut = ?`;
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`;
         const queryProvincia = `SELECT * FROM provincias WHERE id = ?`;
@@ -156,9 +159,21 @@ class WorkOrder {
                 ];
                 throw new KeepFormatError(errors, 409);
             }
+            console.log("antes");
 
+            console.log({
+                numero_folio,
+                observacion,
+                cliente,
+                direccion,
+                provincia,
+                comuna,
+                descripcion,
+            });
+            
             // Ejecuta la consulta de inserción
             const [result] = await db.execute<ResultSetHeader>(queryInsert, [
+                numero_folio,
                 observacion,
                 cliente,
                 direccion,
@@ -166,17 +181,26 @@ class WorkOrder {
                 comuna,
                 descripcion,
             ]);
+            console.log("despues");
 
             const nombreProvincia = idProvincia[0].nombre;
             const nombreComuna = idComuna[0].nombre;
             const numeroFolio = result.insertId;
-            const relativePdfPath = path.posix.join(
-                "pdf",
-                `orden_de_trabajo_${numeroFolio}.pdf`
-            );
-            const absolutePdfPath = path.join(__dirname, "..", "../", relativePdfPath);
 
-            //PdfTransform(numeroFolio,observacion, cliente, direccion, provincia, comuna , descripcion, absolutePdfPath);
+            const fecha_solicitud = new Date().toISOString().split("T")[0];
+            const fecha_entrega = new Date().toISOString().split("T")[0];
+
+            const relativePdfPath = PdfTransformWorkOrder(
+                numero_folio,
+                fecha_solicitud,
+                fecha_entrega,
+                observacion,
+                cliente,
+                direccion,
+                nombreProvincia,
+                nombreComuna,
+                descripcion
+            );
 
             // Actualizar la ruta del PDF en la base de datos
             const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
