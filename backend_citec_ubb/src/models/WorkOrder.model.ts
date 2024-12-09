@@ -18,6 +18,7 @@ class WorkOrder{
                     cliente VARCHAR(200) NOT NULL,
                     direccion VARCHAR(250) NOT NULL,
                     provincia INT NOT NULL,
+                    imagen VARCHAR(200),                    
                     estado VARCHAR(20) NOT NULL DEFAULT 'activo',
                     comuna INT NOT NULL,
                     descripcion VARCHAR(100) NOT NULL,
