@@ -44,6 +44,10 @@ const options: swaggerJSDoc.Options = {
             {
                 name: 'Facturas',
                 description: 'Rutas relacionadas con las facturas'
+            },
+            {
+                name: 'Ordenes de trabajo',
+                description: 'Rutas relacionadas con las ordenes de trabajo'
             }
         ],
         info: {
