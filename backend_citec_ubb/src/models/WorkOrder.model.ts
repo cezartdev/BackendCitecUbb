@@ -195,24 +195,24 @@ class WorkOrder {
             const nombreComuna = idComuna[0].nombre;
             const numeroFolio = result.insertId;
 
-            // const relativePdfPath = PdfTransformWorkOrder(
-            //     numero_folio,
-            //     fecha_solicitud,
-            //     fecha_entrega,
-            //     observacion,
-            //     cliente,
-            //     direccion,
-            //     nombreProvincia,
-            //     nombreComuna,
-            //     descripcion
-            // );
+            const relativePdfPath = PdfTransformWorkOrder(
+                numero_folio,
+                fecha_solicitud,
+                fecha_entrega,
+                observacion,
+                cliente,
+                direccion,
+                nombreProvincia,
+                nombreComuna,
+                descripcion
+            );
 
-            // // Actualizar la ruta del PDF en la base de datos
-            // const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
-            // await db.execute<ResultSetHeader>(queryUpdate, [
-            //     relativePdfPath,
-            //     numeroFolio,
-            // ]);
+            // Actualizar la ruta del PDF en la base de datos
+            const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
+            await db.execute<ResultSetHeader>(queryUpdate, [
+                relativePdfPath,
+                numeroFolio,
+            ]);
 
             const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre, precio_neto) VALUES (?,?,?)`;
             for (const servicio of servicios) {
