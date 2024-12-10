@@ -39,7 +39,7 @@ const router = Router();
 *               direccion:
 *                   type: string
 *                   description: Dirección del cliente
-*                   example: "Av. Siempre Viva 123"
+*                   example: "Av. Siempre Viva 123"|
 *               provincia:
 *                   type: number
 *                   description: ID de la provincia
@@ -88,6 +88,12 @@ const router = Router();
  *                              numero_folio:
  *                                  type: number
  *                                  example: 1
+ *                              fecha_solicitud:
+ *                                  type: string
+ *                                  example: "2024-10-01"
+ *                              fecha_entrega:
+ *                                  type: string
+ *                                  example: "2024-10-10"
  *                              observacion:
  *                                  type: string
  *                                  example: "Requiere revisión adicional"
@@ -330,6 +336,12 @@ router.delete(
  *                              numero_folio:
  *                                  type: number
  *                                  example: 1
+ *                              fecha_solicitud:
+ *                                  type: string
+ *                                  example: "2024-10-01"
+ *                              fecha_entrega:
+ *                                  type: string
+ *                                  example: "2024-10-10"
  *                              observacion:
  *                                  type: string
  *                                  example: "Requiere revisión adicional"

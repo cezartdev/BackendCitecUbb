@@ -13,8 +13,8 @@ class WorkOrder {
         const createTableQuery = `
                 CREATE TABLE IF NOT EXISTS ${this.nombreTabla} (
                     numero_folio INT PRIMARY KEY,
-                    fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    fecha_entrega TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    fecha_solicitud DATE NOT NULL,
+                    fecha_entrega DATE NOT NULL,
                     observacion VARCHAR(300) NOT NULL,
                     cliente VARCHAR(200) NOT NULL,
                     direccion VARCHAR(250) NOT NULL,
@@ -44,6 +44,8 @@ class WorkOrder {
 
     static async create(
         numero_folio: number,
+        fecha_solicitud: string,
+        fecha_entrega: string,
         observacion: string,
         cliente: string,
         direccion: string,
@@ -53,7 +55,7 @@ class WorkOrder {
         servicios: Array<{ nombre: string }>
     ): Promise<RowDataPacket> {
         const queryInsert = `
-        INSERT INTO ${this.nombreTabla} (numero_folio, observacion, cliente, direccion, provincia, comuna, descripcion) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        INSERT INTO ${this.nombreTabla} (numero_folio, fecha_solicitud, fecha_entrega, observacion, cliente, direccion, provincia, comuna, descripcion) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const queryCliente = `SELECT * FROM empresas WHERE rut = ?`;
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`;
         const queryProvincia = `SELECT * FROM provincias WHERE id = ?`;
@@ -151,7 +153,7 @@ class WorkOrder {
                 const errors = [
                     {
                         type: "field",
-                        msg: "La empresa que intenta crear ya existe",
+                        msg: "La orden de trabajo que intenta crear ya existe",
                         value: `${numero_folio}`,
                         path: "numero_folio",
                         location: "body",
@@ -161,8 +163,13 @@ class WorkOrder {
             }
             console.log("antes");
 
+            const fecha_solicitud = new Date().toISOString().split("T")[0];
+            const fecha_entrega = new Date().toISOString().split("T")[0];
+
             console.log({
                 numero_folio,
+                fecha_solicitud, 
+                fecha_entrega,
                 observacion,
                 cliente,
                 direccion,
@@ -174,6 +181,8 @@ class WorkOrder {
             // Ejecuta la consulta de inserción
             const [result] = await db.execute<ResultSetHeader>(queryInsert, [
                 numero_folio,
+                fecha_solicitud,
+                fecha_entrega,
                 observacion,
                 cliente,
                 direccion,
@@ -187,8 +196,7 @@ class WorkOrder {
             const nombreComuna = idComuna[0].nombre;
             const numeroFolio = result.insertId;
 
-            const fecha_solicitud = new Date().toISOString().split("T")[0];
-            const fecha_entrega = new Date().toISOString().split("T")[0];
+
 
             const relativePdfPath = PdfTransformWorkOrder(
                 numero_folio,
@@ -363,6 +371,8 @@ class WorkOrder {
 
     static async update(
         numero_folio: number,
+        fecha_solicitud: string,
+        fecha_entrega: string,
         observacion: string,
         cliente: string,
         direccion: string,
@@ -372,7 +382,7 @@ class WorkOrder {
         descripcion: string,
         servicios: Array<{ nombre: string }>
     ): Promise<RowDataPacket> {
-        const queryUpdate = `UPDATE ${this.nombreTabla} SET observacion = ?, cliente = ?, direccion = ?, provincia = ?, comuna = ?, descripcion = ? WHERE numero_folio = ?`;
+        const queryUpdate = `UPDATE ${this.nombreTabla} SET observacion = ?, fecha_solicitud =?, fecha_entrega=?, cliente = ?, direccion = ?, provincia = ?, comuna = ?, descripcion = ? WHERE numero_folio = ?`;
         const querySelect = `SELECT * FROM ${this.nombreTabla} WHERE numero_folio = ?`;
         const queryCliente = `SELECT * FROM empresas WHERE rut = ?`;
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`;
@@ -489,6 +499,8 @@ class WorkOrder {
             // Ejecuta la consulta de actualización
             await db.execute<ResultSetHeader>(queryUpdate, [
                 observacion,
+                fecha_solicitud,
+                fecha_entrega,
                 cliente,
                 direccion,
                 provincia,
