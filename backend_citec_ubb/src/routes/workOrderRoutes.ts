@@ -20,12 +20,10 @@ const router = Router();
 *                   example: 1
 *               fecha_solicitud:
 *                   type: string
-*                   format: date
 *                   description: Fecha de solicitud de la orden de trabajo
 *                   example: "2024-10-01"
 *               fecha_entrega:
 *                   type: string
-*                   format: date
 *                   description: Fecha de entrega de la orden de trabajo
 *                   example: "2024-10-10"
 *               observacion:
@@ -39,7 +37,7 @@ const router = Router();
 *               direccion:
 *                   type: string
 *                   description: Dirección del cliente
-*                   example: "Av. Siempre Viva 123"|
+*                   example: "Av. Siempre Viva 123"
 *               provincia:
 *                   type: number
 *                   description: ID de la provincia

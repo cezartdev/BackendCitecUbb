@@ -55,7 +55,7 @@ class WorkOrder {
         servicios: Array<{ nombre: string }>
     ): Promise<RowDataPacket> {
         const queryInsert = `
-        INSERT INTO ${this.nombreTabla} (numero_folio, fecha_solicitud, fecha_entrega, observacion, cliente, direccion, provincia, comuna, descripcion) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        INSERT INTO ${this.nombreTabla} (numero_folio, fecha_solicitud, fecha_entrega, observacion, cliente, direccion, provincia, comuna, descripcion) VALUES (?, ?,?,?, ?, ?, ?, ?, ?)`;
         const queryCliente = `SELECT * FROM empresas WHERE rut = ?`;
         const queryServicios = `SELECT * FROM servicios WHERE nombre = ?`;
         const queryProvincia = `SELECT * FROM provincias WHERE id = ?`;
@@ -163,9 +163,6 @@ class WorkOrder {
             }
             console.log("antes");
 
-            const fecha_solicitud = new Date().toISOString().split("T")[0];
-            const fecha_entrega = new Date().toISOString().split("T")[0];
-
             console.log({
                 numero_folio,
                 fecha_solicitud, 
@@ -187,16 +184,17 @@ class WorkOrder {
                 cliente,
                 direccion,
                 provincia,
+                null,
                 comuna,
                 descripcion,
             ]);
 
             const nombreProvincia = idProvincia[0].nombre;
             const nombreComuna = idComuna[0].nombre;
-            const numeroFolio = result.insertId;
+            const numeroFolio1 = result.insertId;
 
             const relativePdfPath = PdfTransformWorkOrder(
-                numero_folio,
+                numeroFolio1,
                 fecha_solicitud,
                 fecha_entrega,
                 observacion,
@@ -211,21 +209,22 @@ class WorkOrder {
             const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
             await db.execute<ResultSetHeader>(queryUpdate, [
                 relativePdfPath,
-                numeroFolio,
+                numeroFolio1,
             ]);
 
             const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre, precio_neto) VALUES (?,?,?)`;
             for (const servicio of servicios) {
                 await db.execute<ResultSetHeader>(queryInsertService, [
-                    numeroFolio,
+                    numeroFolio1,
                     servicio.nombre,
                 ]);
             }
 
-            const invoiceResult = await this.getById(numeroFolio);
+            const workOrderResult = await this.getById(numeroFolio1);
             // Devolvemos la factura creada
-            return invoiceResult;
+            return workOrderResult;
         } catch (err) {
+            console.error("error al encontrar la orden de trabajo", err);
             throw err;
         }
     }
