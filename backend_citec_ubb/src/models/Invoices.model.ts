@@ -215,11 +215,11 @@ class Invoices {
             const nombreGiro = codigoGiro[0].nombre;
             const numeroFolio = result.insertId;
 
-            const relativePdfPath = PdfTransformInvoice(numeroFolio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio);
+            // const relativePdfPath = PdfTransformInvoice(numeroFolio, pago_neto, iva, rut_emisor, rut_receptor, nombreGiro, usuario, exento_iva , precio_por_servicio);
 
-            // Actualizar la ruta del PDF en la base de datos
-            const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
-            await db.execute<ResultSetHeader>(queryUpdate, [relativePdfPath, numeroFolio]);
+            // // Actualizar la ruta del PDF en la base de datos
+            // const queryUpdate = `UPDATE ${this.nombreTabla} SET imagen = ? WHERE numero_folio = ?`;
+            // await db.execute<ResultSetHeader>(queryUpdate, [relativePdfPath, numeroFolio]);
 
             const queryInsertService = `INSERT INTO facturas_servicios (numero_folio, nombre, precio_neto) VALUES (?,?,?)`;
             for (const servicio of precio_por_servicio) {
