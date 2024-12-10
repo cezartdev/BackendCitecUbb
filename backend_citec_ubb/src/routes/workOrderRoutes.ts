@@ -191,6 +191,12 @@ router.post("/create",
       body("numero_folio")
         .notEmpty().withMessage("El numero_folio está vacío")
         .isInt().withMessage("Tipo de dato incorrecto para el numero_folio"),
+      body("fecha_solicitud")
+        .notEmpty().withMessage("La fecha de solicitud está vacía")
+        .isString().withMessage("Formato de fecha incorrecto para la fecha de solicitud"),
+      body("fecha_entrega")
+        .notEmpty().withMessage("La fecha de entrega está vacía")
+        .isString().withMessage("Formato de fecha incorrecto para la fecha de entrega"),
       body("observacion")
         .notEmpty().withMessage("La observacion está vacía")
         .isString().withMessage("Tipo de dato incorrecto para la observacion")
@@ -442,6 +448,12 @@ router.delete(
           body("numero_folio")
             .notEmpty().withMessage("El numero de folio está vacío")
             .isNumeric().withMessage("Tipo de dato incorrecto para el numero de folio"),
+          body("fecha_solicitud")
+            .notEmpty().withMessage("La fecha de solicitud está vacía")
+            .isString().withMessage("Formato de fecha incorrecto para la fecha de solicitud"),
+          body("fecha_entrega")
+            .notEmpty().withMessage("La fecha de entrega está vacía")
+            .isString().withMessage("Formato de fecha incorrecto para la fecha de entrega"),
           body("observacion")
             .notEmpty().withMessage("La observacion está vacía")
             .isString().withMessage("Tipo de dato incorrecto para la observacion")
