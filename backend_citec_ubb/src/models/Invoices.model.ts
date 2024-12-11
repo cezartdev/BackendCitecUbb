@@ -208,7 +208,7 @@ class Invoices {
                 rut_receptor,    // 4
                 codigo_giro,     // 5
                 null,            // 6 (valor para `imagen`)
-                usuario ,         // 7
+                usuario ,        // 7
                 exento_iva
             ]);
 
