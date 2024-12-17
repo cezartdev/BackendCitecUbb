@@ -85,7 +85,7 @@ const server = express()
 const corsOptions : CorsOptions = {
     origin: function(origin,callback){
         console.log(`Query Origin: ${colors.bgYellow.white.bold(origin)}`)
-        if(origin === process.env.FRONTEND_URL || origin === undefined || origin === 'http://localhost:4000' || origin === 'http://146.83.194.142:1580'){
+        if(origin === process.env.FRONTEND_URL){
             callback(null, true)
         }else{
             callback(new Error("Error de CORS"),false)
