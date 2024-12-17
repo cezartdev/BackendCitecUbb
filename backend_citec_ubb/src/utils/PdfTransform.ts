@@ -167,4 +167,5 @@ export const PdfTransformWorkOrder= (numero_folio, fecha_solicitud, fecha_entreg
     doc.fontSize(10).font('Helvetica-Oblique').text("Gracias por su compra. Si tiene alguna consulta, no dude en contactarnos.", { align: "center" });
 
     doc.end();
+    return relativePdfPath;
 }

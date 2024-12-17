@@ -21,17 +21,42 @@ class Services {
         `;
 
         
-        // const insertDataQuery = `
-        //     INSERT INTO ${this.nombreTabla} (url, clave) VALUES 
-        //         ('','')
-        //         ON DUPLICATE KEY UPDATE clave = VALUES(clave);
-        // `;
+         const insertDataQuery = `
+             INSERT INTO ${this.nombreTabla} (nombre) VALUES 
+                ('EVALUACIÓN DE PERMEABILIDAD AL AIRE DE VENTANAS'), 
+                ('EVALUACIÓN TÉCNICA PRESTACIONAL DE VENTANAS'), 
+                ('EVALUACIÓN EXPERIMENTAL DE PANELES'),
+                ('EVALUACIÓN EXPERIMENTAL DE PLACAS DENTADAS'),
+                ('CÁLCULO DE TRANSMITANCIA TÉRMICA DE MUROS'),
+                ('ENSAYO AISLAMIENTO ACÚSTICO A RUIDO AÉREO'),
+                ('EVALUACIÓN TÉCNICA PRESTACIONAL DE PUERTAS'),
+                ('DETERMINACIÓN EXPERIMENTAL DEL COEFICIENTE DE TRANSMISIÓN TÉRMICA DE UNA PUERTA O VENTANA'),
+                ('CÁLCULO DE TRANSMITANCIA TÉRMICA DE MUROS Y RIESGO DE CONDENSACIÓN DE UN MURO SISTEMA SIP'),
+                ('EVALUACIÓN EXPERIMENTAL DE SOBRECARGA HORIZONTAL DE BARANDAS Y/O VENTANAS'),
+                ('DETERMINACIÓN EXPERIMENTAL DEL COEFICIENTE DE TRANSMISIÓN TÉRMICA DE UNA VENTANA'),
+                ('EVALUACIÓN DE PERMEABILIDAD AL AIRE DE PUERTAS'),
+                ('DETERMINACIÓN DE LAS PROPIEDADES DE PERMEABILIDAD AL PASO DEL VAPOR'),
+                ('DETERMINACIÓN EXPERIMENTAL DEL COEFICIENTE DE TRANSMISIÓN TÉRMICA DE UNA PUERTA'),
+                ('ESTUDIO ENERGÉTICO'),
+                ('EVALUACIÓN EXPERIMENTAL DE PANELES'),
+                ('ENSAYO AISLAMIENTO ACÚSTICO A RUIDO AÉREO Y DE IMPACTO'),
+                ('TRACCIÓN MALLA EIFS'),
+                ('ESTANQUEIDAD AL AGUA DE FACHADA'),
+                ('ENSAYO ABSORCIÓN ACÚSTICA A INCIDENCIA NORMAL'),
+                ('DETERMINACIÓN DE CONDUCTIVIDAD Y CÁLCULO DE RESISTENCIA TÉRMICA DE UN MATERIAL AISLANTE'),
+                ('SERVICIO DE ASESORIA ESCUELA QUEPUCA, RALCO'),
+                ('SERVICIO DE ASESORÍA EDIFICIO CAMPUS'),
+                ('SERVICIO DE ASESORÍA TÉCNICA EDIFICIO ECUTEC ANTOFAGASTA'),
+                ('DETERMINACIÓN DE CAUDALES DE VENTILACIÓN')
+                 ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
+
+         `;
 
         try {
             // Crear la tabla si no existe
             await db.query(createTableQuery);
             // Insertar valores por defecto si es necesario
-            // await db.query(insertDataQuery);
+             await db.query(insertDataQuery);
         } catch (err) {
             console.error(`Error al inicializar la tabla ${this.nombreTabla}:`, err);
             throw err;
